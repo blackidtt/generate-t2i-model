@@ -1,0 +1,20 @@
+# Inti aplikasi
+fastapi>=0.110
+uvicorn[standard]>=0.29
+pydantic>=2.6
+pillow>=10.0
+requests>=2.31
+
+# Mode asli (GPU disarankan). Tidak dibutuhkan untuk MOCK=1
+torch>=2.1
+diffusers>=0.27
+transformers>=4.40
+accelerate>=0.29
+open_clip_torch>=2.24
+
+# Skrip analisis
+numpy
+pandas
+scipy
+statsmodels
+scikit-learn

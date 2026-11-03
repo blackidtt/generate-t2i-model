@@ -1,0 +1,17 @@
+{
+  "pid": "PO1",
+  "order": "AB",
+  "stage": "practice_1",
+  "created": 1793532281.059045,
+  "practice": {
+    "IPE": {
+      "prompt": "gambar kucing",
+      "n": 1
+    },
+    "CFU": {
+      "prompt": "",
+      "n": 0
+    }
+  },
+  "tasks": []
+}

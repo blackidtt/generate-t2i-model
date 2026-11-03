@@ -1,0 +1,3 @@
+{"ts": 1793532281.061, "event": "register", "pid": "PO1", "order": "AB"}
+{"ts": 1793532283.437, "event": "advance", "pid": "PO1", "from_stage": "consent", "to_stage": "practice_1"}
+{"ts": 1793532362.203, "event": "practice_step", "pid": "PO1", "mode": "IPE", "n": 1, "user_input": "gambar kucing", "prompt_after": "gambar kucing", "non_english_suspected": true, "llm_error": null}
