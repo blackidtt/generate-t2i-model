@@ -3,136 +3,1768 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Eksperimen Revisi Prompt</title>
+<title>Eksperimen Revisi Prompt | Text-to-Image Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
 <style>
-  :root{--bg:#f5f7fb;--card:#fff;--ink:#0b1f3a;--muted:#5b6b82;--line:#d9e2ec;--brand:#2b4c7e;--accent:#0f8b8d;--warn:#b5543c}
-  *{box-sizing:border-box}
-  body{margin:0;font-family:Calibri,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.45}
-  header{background:var(--ink);color:#fff;padding:12px 24px;display:flex;justify-content:space-between;align-items:center}
-  header h1{font-size:18px;margin:0}
-  header .pid{font-size:13px;opacity:.8}
-  main{max-width:1100px;margin:24px auto;padding:0 16px}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:20px 24px;margin-bottom:16px}
-  h2{margin:0 0 8px;font-size:22px}
-  p{margin:8px 0}
-  .muted{color:var(--muted);font-size:14px}
-  input[type=text],textarea{width:100%;font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:#fff}
-  textarea{min-height:96px;resize:vertical}
-  button{font:inherit;font-weight:600;border:0;border-radius:8px;padding:10px 18px;cursor:pointer;background:var(--brand);color:#fff}
-  button.secondary{background:#fff;color:var(--brand);border:1px solid var(--brand)}
-  button.link{background:none;color:var(--muted);text-decoration:underline;padding:6px;font-weight:400}
-  button:disabled{opacity:.45;cursor:not-allowed}
-  .row{display:flex;gap:20px;flex-wrap:wrap}
-  .col{flex:1 1 360px;min-width:0}
-  .imgbox{aspect-ratio:1/1;max-width:512px;background:#eef2f7;border:1px dashed var(--line);border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--muted);overflow:hidden;position:relative}
-  .imgbox img{width:100%;height:100%;object-fit:contain;display:block}
-  .imgbox .spin{position:absolute;inset:0;background:rgba(255,255,255,.75);display:none;align-items:center;justify-content:center;font-weight:600}
-  .imgbox.busy .spin{display:flex}
-  .label{font-weight:700;margin:0 0 6px;font-size:14px;color:var(--brand);text-transform:uppercase;letter-spacing:.04em}
-  .warn{background:#fdf0ec;border:1px solid #f0c9bd;color:var(--warn);padding:8px 12px;border-radius:8px;margin:10px 0;font-size:14px;display:none}
-  .ok{background:#e8f5f1;border:1px solid #b9ded4;color:#0b5d57;padding:10px 14px;border-radius:8px;margin:10px 0;display:none}
-  .chat{border:1px solid var(--line);border-radius:8px;background:#fafcff;padding:10px;max-height:200px;overflow:auto;margin-bottom:10px;font-size:15px}
-  .bubble{padding:6px 10px;border-radius:12px;margin:4px 0;max-width:85%}
-  .me{background:var(--brand);color:#fff;margin-left:auto}
-  .sys{background:#e6eef7}
-  .actions{display:flex;gap:10px;align-items:center;margin-top:10px;flex-wrap:wrap}
-  .hidden{display:none!important}
-  ul.rules{margin:8px 0 8px 20px;padding:0}
-  .mockbar{background:#e9b44c;color:#0b1f3a;text-align:center;padding:4px;font-size:13px;font-weight:600}
+  :root {
+    --bg-page: #fff5f8;
+    --bg-card: #ffffff;
+    --border-color: #fce7f3;
+    --border-subtle: #fff1f5;
+    --text-main: #3d1c28;
+    --text-muted: #7d5366;
+    --text-subtle: #ad8396;
+    
+    --brand-50: #fff1f5;
+    --brand-100: #ffe4ed;
+    --brand-200: #fecddc;
+    --brand-300: #fba4be;
+    --brand-400: #f7769e;
+    --brand-500: #ec4899;
+    --brand-600: #db2777;
+    --brand-700: #be185d;
+    --brand-800: #9d174d;
+    --brand-900: #701a75;
+
+    --purple-50: #fff1f5;
+    --purple-100: #fce7f3;
+    --purple-600: #db2777;
+    --purple-700: #be185d;
+
+    --success-bg: #ecfdf5;
+    --success-border: #a7f3d0;
+    --success-text: #065f46;
+    --success-accent: #10b981;
+
+    --warn-bg: #fffbeb;
+    --warn-border: #fef3c7;
+    --warn-text: #92400e;
+    --warn-accent: #f59e0b;
+
+    --danger-bg: #fef2f2;
+    --danger-border: #fecaca;
+    --danger-text: #991b1b;
+    --danger-accent: #ef4444;
+
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 20px;
+
+    --shadow-sm: 0 1px 3px 0 rgba(244, 114, 182, 0.1);
+    --shadow-md: 0 4px 10px -1px rgba(244, 114, 182, 0.15), 0 2px 4px -2px rgba(244, 114, 182, 0.1);
+    --shadow-lg: 0 10px 20px -3px rgba(236, 72, 153, 0.15), 0 4px 6px -4px rgba(236, 72, 153, 0.1);
+    --shadow-xl: 0 20px 25px -5px rgba(236, 72, 153, 0.2), 0 8px 10px -6px rgba(236, 72, 153, 0.12);
+  }
+
+  * { box-sizing: border-box; }
+  
+  body {
+    margin: 0;
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--bg-page);
+    color: var(--text-main);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Mock Bar */
+  .mockbar {
+    background: linear-gradient(90deg, #f472b6, #ec4899);
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 6px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 1px 3px rgba(236, 72, 153, 0.25);
+    z-index: 50;
+  }
+
+  /* Header (Chic Baby Pink Gradient) */
+  header {
+    background: linear-gradient(135deg, #fb7185 0%, #f472b6 50%, #ec4899 100%);
+    color: #ffffff;
+    padding: 14px 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 20px -2px rgba(244, 114, 182, 0.4);
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+  }
+
+  .brand-area {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .brand-logo-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ec4899;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    flex-shrink: 0;
+  }
+
+  .brand-titles {
+    display: flex;
+    flex-direction: column;
+  }
+
+  header h1 {
+    font-size: 17px;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: -0.01em;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .header-subtitle {
+    font-size: 12px;
+    color: #fff1f5;
+    margin: 0;
+    font-weight: 500;
+    opacity: 0.95;
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .pid-badge {
+    background: rgba(255, 255, 255, 0.22);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    letter-spacing: 0.02em;
+  }
+
+  .btn-reset-header {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .btn-reset-header:hover {
+    background: rgba(255, 255, 255, 0.3);
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.5);
+  }
+
+  /* Stepper Progress Bar (7 steps) */
+  .stepper-container {
+    background: #ffffff;
+    border-bottom: 1px solid var(--border-color);
+    padding: 12px 24px;
+    overflow-x: auto;
+    position: relative;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+  }
+
+  .stepper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 0;
+    list-style: none;
+    min-width: 580px;
+  }
+
+  .step-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    flex: 1;
+    text-align: center;
+  }
+
+  .step-item:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 14px;
+    left: 55%;
+    width: 90%;
+    height: 2px;
+    background: var(--border-color);
+    z-index: 1;
+    transition: background 0.3s ease;
+  }
+
+  .step-item.completed:not(:last-child)::after {
+    background: var(--brand-400);
+  }
+
+  .step-node {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 2px solid var(--border-color);
+    color: var(--text-muted);
+    font-size: 12px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 2;
+    transition: all 0.25s ease;
+  }
+
+  .step-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-top: 6px;
+    white-space: nowrap;
+    transition: color 0.25s ease;
+  }
+
+  .step-sublabel {
+    font-size: 10px;
+    color: var(--text-subtle);
+    font-weight: 500;
+  }
+
+  .step-item.active .step-node {
+    background: linear-gradient(135deg, #f472b6, #ec4899);
+    border-color: #ec4899;
+    color: #ffffff;
+    box-shadow: 0 0 0 4px var(--brand-100);
+  }
+
+  .step-item.active .step-label {
+    color: var(--brand-700);
+    font-weight: 700;
+  }
+
+  .step-item.completed .step-node {
+    background: var(--brand-400);
+    border-color: var(--brand-400);
+    color: transparent;
+    position: relative;
+  }
+
+  .step-item.completed .step-node::after {
+    content: '✓';
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 800;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .step-item.completed .step-label {
+    color: var(--text-main);
+  }
+
+  /* Main Layout */
+  main {
+    max-width: 1140px;
+    width: 100%;
+    margin: 28px auto;
+    padding: 0 20px;
+    flex: 1;
+  }
+
+  /* Card Components */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 24px 28px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+
+  .card:hover {
+    box-shadow: var(--shadow-md);
+  }
+
+  h2 {
+    margin: 0 0 8px;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text-main);
+    letter-spacing: -0.015em;
+  }
+
+  p { margin: 8px 0; }
+
+  .muted {
+    color: var(--text-muted);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  /* Form Elements */
+  input[type=text], textarea {
+    width: 100%;
+    font-family: inherit;
+    font-size: 14px;
+    padding: 12px 14px;
+    border: 1.5px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background: #ffffff;
+    color: var(--text-main);
+    transition: all 0.2s ease;
+  }
+
+  input[type=text]:focus, textarea:focus {
+    outline: none;
+    border-color: var(--brand-400);
+    box-shadow: 0 0 0 3.5px var(--brand-100);
+  }
+
+  textarea {
+    min-height: 105px;
+    resize: vertical;
+    line-height: 1.5;
+  }
+
+  /* Buttons */
+  button, .btn {
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    border: 0;
+    border-radius: var(--radius-md);
+    padding: 10px 20px;
+    cursor: pointer;
+    background: linear-gradient(135deg, #f472b6 0%, #ec4899 100%);
+    color: #ffffff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 6px rgba(236, 72, 153, 0.25);
+  }
+
+  button:hover:not(:disabled), .btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(236, 72, 153, 0.35);
+  }
+
+  button:active:not(:disabled), .btn:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  button.secondary {
+    background: #ffffff;
+    color: var(--brand-700);
+    border: 1.5px solid var(--brand-200);
+    box-shadow: var(--shadow-sm);
+  }
+
+  button.secondary:hover:not(:disabled) {
+    background: var(--brand-50);
+    border-color: var(--brand-300);
+    color: var(--brand-800);
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #f472b6 0%, #ec4899 100%);
+    color: #ffffff;
+  }
+
+  button.btn-success {
+    background: var(--success-accent);
+    color: #ffffff;
+  }
+
+  button.btn-success:hover:not(:disabled) {
+    background: #059669;
+    box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
+  }
+
+  button.link, .btn-link {
+    background: none;
+    color: var(--text-muted);
+    text-decoration: underline;
+    padding: 6px 10px;
+    font-weight: 500;
+    box-shadow: none;
+  }
+
+  button.btn-ghost-danger {
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px dashed var(--border-color);
+    padding: 8px 14px;
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  button.btn-ghost-danger:hover:not(:disabled) {
+    background: var(--danger-bg);
+    border-color: var(--danger-border);
+    color: var(--danger-accent);
+    transform: none;
+    box-shadow: none;
+  }
+
+  button:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+
+  .btn-large {
+    padding: 13px 28px;
+    font-size: 15px;
+    border-radius: var(--radius-md);
+  }
+
+  .btn-sm {
+    padding: 6px 14px;
+    font-size: 12.5px;
+    border-radius: var(--radius-sm);
+  }
+
+  /* Two Column Layout */
+  .row {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    align-items: stretch;
+    transition: all 0.3s ease;
+  }
+
+  .col {
+    flex: 1 1 380px;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .col > .card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Image Box Area */
+  .imgbox-wrap {
+    position: relative;
+    width: 100%;
+    margin: 8px 0 16px;
+  }
+
+  .imgbox {
+    aspect-ratio: 1/1;
+    width: 100%;
+    max-width: 480px;
+    margin: 0 auto;
+    background: #fff0f5;
+    border: 1.5px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    overflow: hidden;
+    position: relative;
+    box-shadow: inset 0 2px 4px rgba(244, 114, 182, 0.05);
+  }
+
+  .target-imgbox {
+    border-color: var(--brand-200);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .imgbox img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.25s ease;
+  }
+
+  .imgbox img:hover {
+    cursor: zoom-in;
+  }
+
+  /* Loading Overlay */
+  .imgbox .spin {
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(5px);
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    font-weight: 600;
+    color: var(--text-main);
+    z-index: 10;
+  }
+
+  .imgbox.busy .spin {
+    display: flex;
+  }
+
+  .spinner-ring {
+    width: 44px;
+    height: 44px;
+    border: 3.5px solid var(--brand-100);
+    border-top-color: var(--brand-500);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  .spin-text {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--brand-700);
+    letter-spacing: -0.01em;
+  }
+
+  .spin-subtext {
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--text-muted);
+  }
+
+  /* Empty State Placeholder */
+  .img-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 20px;
+    text-align: center;
+    gap: 8px;
+  }
+
+  .placeholder-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: var(--brand-50);
+    color: var(--brand-600);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 4px;
+  }
+
+  .placeholder-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-main);
+    margin: 0;
+  }
+
+  .placeholder-sub {
+    font-size: 12px;
+    color: var(--text-subtle);
+    max-width: 240px;
+    margin: 0;
+  }
+
+  /* Badges & Pills */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+
+  .badge-primary {
+    background: var(--brand-50);
+    color: var(--brand-700);
+    border: 1px solid var(--brand-200);
+  }
+
+  .badge-purple {
+    background: var(--purple-50);
+    color: var(--purple-700);
+    border: 1px solid var(--purple-100);
+  }
+
+  .badge-neutral {
+    background: var(--brand-50);
+    color: var(--brand-700);
+    border: 1px solid var(--brand-100);
+  }
+
+  .card-header-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .card-header-bar .label {
+    margin: 0;
+  }
+
+  .label {
+    font-weight: 700;
+    margin: 0 0 6px;
+    font-size: 13px;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .input-panel {
+    background: #fff8fa;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    margin-top: 14px;
+    transition: all 0.3s ease;
+  }
+
+  .input-hint-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .key-tip {
+    font-size: 11px;
+    color: var(--text-subtle);
+  }
+
+  .key-tip kbd {
+    background: #ffffff;
+    border: 1px solid var(--brand-200);
+    border-radius: 4px;
+    padding: 2px 5px;
+    font-size: 10px;
+    font-family: inherit;
+    font-weight: 600;
+    color: var(--brand-800);
+  }
+
+  /* Alerts and Notifications */
+  .warn {
+    background: var(--warn-bg);
+    border: 1.5px solid var(--warn-border);
+    color: var(--warn-text);
+    padding: 12px 16px;
+    border-radius: var(--radius-md);
+    margin: 12px 0;
+    font-size: 13.5px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    line-height: 1.5;
+  }
+
+  .warn.error-box {
+    background: var(--danger-bg);
+    border-color: var(--danger-border);
+    color: var(--danger-text);
+  }
+
+  .ok {
+    background: var(--success-bg);
+    border: 1.5px solid var(--success-border);
+    color: var(--success-text);
+    padding: 16px 20px;
+    border-radius: var(--radius-md);
+    margin: 14px 0;
+    display: none;
+    align-items: center;
+    gap: 14px;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.12);
+  }
+
+  .ok-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--success-accent);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .ok-content h4 {
+    margin: 0 0 4px;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--success-text);
+  }
+
+  .ok-content p {
+    margin: 0;
+    font-size: 13px;
+    color: #047857;
+  }
+
+  /* CFU Revision History Stream (Clean history, NO AI Assistant avatar) */
+  .chat {
+    border: 1.5px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background: #ffffff;
+    padding: 12px;
+    min-height: 140px;
+    max-height: 240px;
+    overflow-y: auto;
+    margin-bottom: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    scroll-behavior: smooth;
+  }
+
+  .chat:empty::before {
+    content: 'Riwayat instruksi revisi Anda akan dicatat di sini.';
+    color: var(--text-subtle);
+    font-size: 13px;
+    font-style: italic;
+    display: block;
+    text-align: center;
+    padding: 30px 10px;
+  }
+
+  .cfu-history-item {
+    background: #fff8fa;
+    border: 1px solid var(--border-color);
+    border-left: 3.5px solid var(--brand-400);
+    border-radius: 6px;
+    padding: 8px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    animation: fadeIn 0.25s ease;
+  }
+
+  .cfu-history-item.initial {
+    border-left-color: var(--brand-500);
+    background: var(--brand-50);
+  }
+
+  .cfu-history-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--brand-700);
+  }
+
+  .cfu-history-text {
+    font-size: 13.5px;
+    color: var(--text-main);
+    line-height: 1.45;
+  }
+
+  .chat-input-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .chat-input-row input[type=text] {
+    flex: 1;
+  }
+
+  /* Actions Container */
+  .actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-top: 14px;
+    flex-wrap: wrap;
+  }
+
+  .work-nav-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  /* Onboarding / Register Card */
+  .auth-card {
+    max-width: 480px;
+    margin: 40px auto;
+    text-align: center;
+    padding: 36px 32px;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .auth-icon-wrap {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--brand-50);
+    color: var(--brand-600);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 18px;
+  }
+
+  .input-big {
+    font-size: 18px;
+    font-weight: 600;
+    text-align: center;
+    letter-spacing: 0.05em;
+    padding: 14px;
+    border-radius: var(--radius-md);
+  }
+
+  /* Rules Box in Consent */
+  .rules-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 14px;
+    margin: 20px 0;
+  }
+
+  .rule-card {
+    background: #fff8fa;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .rule-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--brand-500);
+    flex-shrink: 0;
+  }
+
+  .rule-body h4 {
+    margin: 0 0 3px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-main);
+  }
+
+  .rule-body p {
+    margin: 0;
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.45;
+  }
+
+  .consent-checkbox-wrap {
+    background: #fff8fa;
+    border: 1.5px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 14px 18px;
+    margin: 20px 0;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .consent-checkbox-wrap:hover {
+    border-color: var(--brand-400);
+    background: var(--brand-50);
+  }
+
+  .consent-checkbox-wrap input[type=checkbox] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--brand-500);
+    margin-right: 12px;
+    cursor: pointer;
+  }
+
+  /* ==============================================================
+     PRODUCT TOUR: SPOTLIGHT & ANIMATED BACKDROP OVERLAY
+     ============================================================== */
+  .tour-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 9990;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+
+  /* Spotlight cut-out that darkens everything else */
+  .tour-spotlight-box {
+    position: fixed;
+    border-radius: 14px;
+    box-shadow: 0 0 0 9999px rgba(45, 14, 28, 0.78);
+    border: 2.5px solid var(--brand-400);
+    pointer-events: none;
+    transition: top 0.38s cubic-bezier(0.2, 0.9, 0.3, 1),
+                left 0.38s cubic-bezier(0.2, 0.9, 0.3, 1),
+                width 0.38s cubic-bezier(0.2, 0.9, 0.3, 1),
+                height 0.38s cubic-bezier(0.2, 0.9, 0.3, 1);
+    z-index: 9992;
+  }
+
+  /* Glowing animated pulse ring */
+  .tour-pulse-ring {
+    position: absolute;
+    inset: -6px;
+    border-radius: 18px;
+    border: 2px solid rgba(247, 118, 158, 0.9);
+    animation: tourPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    pointer-events: none;
+  }
+
+  @keyframes tourPulse {
+    0% {
+      transform: scale(0.98);
+      opacity: 0.9;
+      box-shadow: 0 0 0 0 rgba(236, 72, 153, 0.6);
+    }
+    50% {
+      transform: scale(1.02);
+      opacity: 0.4;
+      box-shadow: 0 0 16px 4px rgba(244, 114, 182, 0.4);
+    }
+    100% {
+      transform: scale(0.98);
+      opacity: 0.9;
+      box-shadow: 0 0 0 0 rgba(236, 72, 153, 0.6);
+    }
+  }
+
+  /* Floating Popover Tooltip */
+  .tour-popover {
+    position: fixed;
+    z-index: 9995;
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 22px 24px;
+    width: 390px;
+    max-width: calc(100vw - 32px);
+    box-shadow: 0 20px 30px -5px rgba(61, 28, 40, 0.25), 0 8px 12px -6px rgba(61, 28, 40, 0.15);
+    border: 1.5px solid var(--border-color);
+    transition: top 0.38s cubic-bezier(0.2, 0.9, 0.3, 1),
+                left 0.38s cubic-bezier(0.2, 0.9, 0.3, 1);
+    animation: tourPopIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    pointer-events: auto;
+  }
+
+  @keyframes tourPopIn {
+    from {
+      opacity: 0;
+      transform: scale(0.94) translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+
+  .tour-popover-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  .tour-badge-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .tour-step-pill {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--brand-700);
+    background: var(--brand-50);
+    padding: 3px 8px;
+    border-radius: 10px;
+    border: 1px solid var(--brand-100);
+  }
+
+  .tour-btn-close {
+    background: transparent;
+    border: 0;
+    color: var(--text-muted);
+    font-size: 16px;
+    cursor: pointer;
+    padding: 4px;
+    line-height: 1;
+    border-radius: 6px;
+    transition: all 0.2s;
+  }
+
+  .tour-btn-close:hover {
+    color: var(--text-main);
+    background: var(--brand-50);
+  }
+
+  .tour-popover-title {
+    margin: 0 0 6px;
+    font-size: 16.5px;
+    font-weight: 700;
+    color: var(--text-main);
+    letter-spacing: -0.01em;
+  }
+
+  .tour-popover-desc {
+    margin: 0 0 12px;
+    font-size: 13.5px;
+    color: var(--text-muted);
+    line-height: 1.55;
+  }
+
+  .tour-interactive-hint {
+    background: #fff8fa;
+    border: 1px dashed var(--brand-300);
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin-bottom: 16px;
+    font-size: 12px;
+    color: var(--brand-800);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    line-height: 1.45;
+  }
+
+  .tour-popover-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--border-subtle);
+    padding-top: 14px;
+  }
+
+  .tour-dots {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+  }
+
+  .tour-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--brand-200);
+    transition: all 0.2s ease;
+  }
+
+  .tour-dot.active {
+    width: 18px;
+    border-radius: 8px;
+    background: var(--brand-500);
+  }
+
+  .tour-buttons {
+    display: flex;
+    gap: 8px;
+  }
+
+  /* Break & Done Screens */
+  .center-state-card {
+    max-width: 580px;
+    margin: 40px auto;
+    text-align: center;
+    padding: 40px 32px;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .center-icon-wrap {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 32px;
+  }
+
+  .break-icon {
+    background: #fff7ed;
+    color: #ea580c;
+    border: 2px solid #ffedd5;
+  }
+
+  .done-icon {
+    background: #ecfdf5;
+    color: #059669;
+    border: 2px solid #a7f3d0;
+  }
+
+  .info-callout {
+    background: #fff8fa;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    margin: 24px 0;
+    text-align: left;
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  /* Score Debug Badge */
+  .score-debug-pill {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    background: var(--brand-50);
+    color: var(--brand-800);
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 10px;
+  }
+
+  /* Modal Lightbox for Images */
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    background: rgba(28, 10, 20, 0.9);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10005;
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10005;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+    padding: 24px;
+  }
+
+  .lightbox.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .lightbox-content {
+    max-width: 90vw;
+    max-height: 90vh;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-xl);
+    position: relative;
+    background: #000;
+  }
+
+  .lightbox-content img {
+    display: block;
+    max-width: 800px;
+    max-height: 80vh;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+  }
+
+  .lightbox-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: rgba(0,0,0,0.6);
+    color: #ffffff;
+    border: 0;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  /* Helper utilities */
+  .hidden { display: none !important; }
+  .text-success { color: var(--success-accent); font-weight: 600; }
+  .flex-between { display: flex; justify-content: space-between; align-items: center; }
+
+  /* Responsive Adjustments */
+  @media (max-width: 768px) {
+    header { padding: 12px 16px; }
+    main { margin: 16px auto; padding: 0 12px; }
+    .card { padding: 18px 16px; }
+    .row { flex-direction: column; gap: 16px; }
+    .stepper { min-width: 520px; }
+    .tour-popover { width: calc(100vw - 32px); left: 16px !important; }
+  }
 </style>
 </head>
 <body>
-<div id="mockbar" class="mockbar hidden">MODE MOCK: gambar dan skor tiruan, bukan SDXL-Turbo dan CLIP</div>
-<header><h1>Eksperimen Revisi Prompt Text-to-Image</h1><div class="pid" id="pidlabel"></div></header>
+
+<!-- Mock Banner -->
+<div id="mockbar" class="mockbar hidden">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+  </svg>
+  <span><strong>MODE MOCK:</strong> Menggunakan generator & skor simulasi (tanpa GPU). Cocok untuk uji alur antarmuka.</span>
+</div>
+
+<!-- Header -->
+<header>
+  <div class="brand-area">
+    <div class="brand-logo-icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+      </svg>
+    </div>
+    <div class="brand-titles">
+      <h1>Eksperimen Revisi Prompt</h1>
+      <p class="header-subtitle">Studi Interaksi Manusia dan Komputer (IMK) • Text-to-Image Generation</p>
+    </div>
+  </div>
+
+  <div class="header-actions">
+    <div class="pid-badge hidden" id="pid-container">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+      </svg>
+      <span id="pidlabel"></span>
+    </div>
+    <button class="btn-reset-header hidden" id="btn-reset" title="Mulai ulang atau ganti partisipan">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+        <path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/>
+        <path d="M16 21h5v-5"/>
+      </svg>
+      <span>Ganti Partisipan</span>
+    </button>
+  </div>
+</header>
+
+<!-- Progress Stepper (7 stages) -->
+<div class="stepper-container" id="stepper-wrap">
+  <ol class="stepper" id="stepper">
+    <li class="step-item" id="step-reg">
+      <div class="step-node">1</div>
+      <div class="step-label">Registrasi</div>
+      <div class="step-sublabel">Kode Peserta</div>
+    </li>
+    <li class="step-item" id="step-consent">
+      <div class="step-node">2</div>
+      <div class="step-label">Persetujuan</div>
+      <div class="step-sublabel">Informed Consent</div>
+    </li>
+    <li class="step-item" id="step-guide">
+      <div class="step-node">3</div>
+      <div class="step-label">Tur Panduan</div>
+      <div class="step-sublabel">IPE & CFU</div>
+    </li>
+    <li class="step-item" id="step-t1">
+      <div class="step-node">4</div>
+      <div class="step-label">Tugas 1</div>
+      <div class="step-sublabel" id="step-sub-t1">Target Visual</div>
+    </li>
+    <li class="step-item" id="step-break">
+      <div class="step-node">5</div>
+      <div class="step-label">Jeda</div>
+      <div class="step-sublabel">Istirahat</div>
+    </li>
+    <li class="step-item" id="step-t2">
+      <div class="step-node">6</div>
+      <div class="step-label">Tugas 2</div>
+      <div class="step-sublabel" id="step-sub-t2">Target Visual</div>
+    </li>
+    <li class="step-item" id="step-done">
+      <div class="step-node">7</div>
+      <div class="step-label">Selesai</div>
+      <div class="step-sublabel">Terima Kasih</div>
+    </li>
+  </ol>
+</div>
+
 <main>
 
-<section id="s-register" class="card hidden">
-  <h2>Mulai sesi</h2>
-  <p class="muted">Masukkan kode partisipan dari peneliti.</p>
-  <p><input type="text" id="pid-input" placeholder="contoh: P01" maxlength="32" autocomplete="off"></p>
-  <div class="actions"><button id="btn-register">Lanjut</button></div>
-  <div id="reg-err" class="warn"></div>
-</section>
-
-<section id="s-consent" class="card hidden">
-  <h2>Persetujuan partisipasi</h2>
-  <p>Anda diminta membuat ulang sebuah gambar target dengan menulis dan merevisi prompt pada dua cara kerja yang berbeda. Sesi berlangsung sekitar 20 sampai 40 menit.</p>
-  <ul class="rules">
-    <li>Data yang dicatat: teks yang Anda ketik, waktu, dan gambar yang dihasilkan. Tidak ada data pribadi, hanya kode partisipan.</li>
-    <li>Anda boleh berhenti kapan saja tanpa konsekuensi.</li>
-    <li><b>Tulis semua prompt dan instruksi dalam bahasa Inggris.</b> Model gambar hanya didukung secara resmi untuk bahasa Inggris. Jangan memakai alat bantu eksternal, termasuk alat terjemahan.</li>
-  </ul>
-  <p><label><input type="checkbox" id="consent-check"> Saya sudah membaca penjelasan di atas dan setuju berpartisipasi.</label></p>
-  <div class="actions"><button id="btn-consent" disabled>Mulai</button></div>
-</section>
-
-<section id="s-work" class="hidden">
-  <div class="card">
-    <h2 id="work-title"></h2>
-    <p id="work-desc" class="muted"></p>
-    <div id="lang-warn" class="warn">Teks Anda terdeteksi bukan bahasa Inggris. Mohon tulis dalam bahasa Inggris.</div>
-  </div>
-  <div class="row">
-    <div class="col" id="col-target">
-      <div class="card">
-        <p class="label">Gambar target</p>
-        <div class="imgbox"><img id="target-img" alt="Gambar target"></div>
-      </div>
+  <!-- Screen 1: Register -->
+  <section id="s-register" class="card auth-card hidden">
+    <div class="auth-icon-wrap">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+        <line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/>
+      </svg>
     </div>
-    <div class="col">
-      <div class="card">
-        <p class="label">Gambar Anda</p>
-        <div class="imgbox" id="result-box"><span id="result-ph">Belum ada gambar</span><img id="result-img" class="hidden" alt="Hasil"><div class="spin">Membuat gambar...</div></div>
+    <h2>Mulai Sesi Eksperimen</h2>
+    <p class="muted">Silakan masukkan kode partisipan yang diberikan oleh peneliti untuk memulai.</p>
+    
+    <div style="margin: 24px 0 16px;">
+      <input type="text" id="pid-input" class="input-big" placeholder="contoh: P01" maxlength="32" autocomplete="off" autofocus>
+    </div>
+    
+    <div id="reg-err" class="warn error-box" style="display:none"></div>
 
-        <div id="ipe-ui" class="hidden" style="margin-top:14px">
-          <p class="label">Prompt</p>
-          <textarea id="ipe-text" placeholder="Describe the image in English"></textarea>
-          <div class="actions"><button id="btn-ipe">Generate</button></div>
+    <div class="actions" style="justify-content:center; margin-top:20px;">
+      <button id="btn-register" class="btn btn-large" style="width:100%;">
+        <span>Mulai Sesi</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+  </section>
+
+  <!-- Screen 2: Consent -->
+  <section id="s-consent" class="card hidden">
+    <div class="flex-between" style="margin-bottom:12px;">
+      <h2>Persetujuan Partisipasi Penelitian</h2>
+      <span class="badge badge-primary">Informed Consent</span>
+    </div>
+    <p class="muted">
+      Selamat datang! Anda diundang untuk berpartisipasi dalam penelitian eksperimental yang membandingkan dua strategi revisi prompt dalam pembuatan gambar Text-to-Image (T2I). Anda akan diminta membuat ulang sebuah gambar target dengan merevisi prompt secara bertahap.
+    </p>
+
+    <div class="rules-grid">
+      <div class="rule-card">
+        <div class="rule-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
         </div>
-
-        <div id="cfu-first" class="hidden" style="margin-top:14px">
-          <p class="label">Prompt awal</p>
-          <textarea id="cfu-first-text" placeholder="Describe the image in English"></textarea>
-          <div class="actions"><button id="btn-cfu-first">Generate</button></div>
-        </div>
-
-        <div id="cfu-chat-ui" class="hidden" style="margin-top:14px">
-          <p class="label">Percakapan</p>
-          <div class="chat" id="chat"></div>
-          <input type="text" id="cfu-text" placeholder="Tell the assistant what to change, in English">
-          <div class="actions"><button id="btn-cfu">Kirim</button></div>
-        </div>
-
-        <div id="score-debug" class="muted hidden" style="margin-top:8px">Skor (debug peneliti): <b id="score-val"></b></div>
-        <div id="done-ok" class="ok">Gambar Anda sudah sesuai dengan target.</div>
-        <div id="err" class="warn"></div>
-        <div class="actions">
-          <button id="btn-next" class="hidden">Lanjut</button>
-          <button id="btn-giveup" class="link hidden">Saya ingin berhenti pada tugas ini</button>
+        <div class="rule-body">
+          <h4>Estimasi Waktu</h4>
+          <p>Sesi keseluruhan berlangsung sekitar 20 hingga 35 menit, termasuk membaca panduan dan jeda santai.</p>
         </div>
       </div>
+
+      <div class="rule-card">
+        <div class="rule-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <div class="rule-body">
+          <h4>Kerahasiaan & Anonimitas</h4>
+          <p>Hanya mencatat teks prompt, durasi waktu, dan gambar hasil. Tidak ada data pribadi yang dikumpulkan.</p>
+        </div>
+      </div>
+
+      <div class="rule-card">
+        <div class="rule-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        </div>
+        <div class="rule-body">
+          <h4>Wajib Bahasa Inggris</h4>
+          <p>Semua prompt & instruksi wajib diketik dalam <strong>Bahasa Inggris</strong> tanpa menggunakan penerjemah eksternal.</p>
+        </div>
+      </div>
+
+      <div class="rule-card">
+        <div class="rule-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </div>
+        <div class="rule-body">
+          <h4>Partisipasi Sukarela</h4>
+          <p>Anda berhak menghentikan partisipasi kapan saja tanpa adanya konsekuensi atau penalti apa pun.</p>
+        </div>
+      </div>
     </div>
-  </div>
-</section>
 
-<section id="s-break" class="card hidden">
-  <h2>Istirahat sebentar</h2>
-  <p>Tugas pertama selesai. Tugas kedua memakai gambar target yang sama dengan cara kerja yang berbeda. Tekan lanjut saat siap.</p>
-  <div class="actions"><button id="btn-break">Lanjut ke tugas kedua</button></div>
-</section>
+    <label class="consent-checkbox-wrap">
+      <input type="checkbox" id="consent-check">
+      <span style="font-size:14px; font-weight:500;">
+        Saya telah membaca penjelasan di atas secara seksama dan <strong>setuju untuk berpartisipasi secara sukarela</strong> dalam penelitian ini.
+      </span>
+    </label>
 
-<section id="s-done" class="card hidden">
-  <h2>Terima kasih</h2>
-  <p>Sesi Anda sudah selesai. Data Anda tersimpan dengan kode partisipan saja.</p>
-</section>
+    <div class="actions">
+      <button id="btn-consent" class="btn btn-large" disabled>
+        <span>Lanjut ke Tur Panduan Fitur</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+  </section>
+
+  <!-- Screen 3: Workspace (Task 1, Task 2, and Interactive Tour) -->
+  <section id="s-work" class="hidden">
+    
+    <!-- Top Workspace Card -->
+    <div class="card" style="margin-bottom:18px;">
+      <div class="flex-between" style="flex-wrap:wrap; gap:10px; margin-bottom:8px;">
+        <div>
+          <h2 id="work-title" style="margin-bottom:4px;">Tugas Pembuatan Gambar</h2>
+          <p id="work-desc" class="muted" style="margin:0;"></p>
+        </div>
+        <div id="mode-badge-wrap" style="display:flex; gap:8px; align-items:center;">
+          <span class="badge badge-purple" id="badge-condition">Metode</span>
+          <span class="badge badge-primary" id="badge-iteration">Iterasi #0</span>
+          <button class="btn secondary btn-sm" id="btn-relaunch-tour" onclick="startProductTour(false)" title="Jalankan tur panduan langkah demi langkah">
+            🎯 Tur Panduan
+          </button>
+        </div>
+      </div>
+
+      <!-- Language Warning Callout -->
+      <div id="lang-warn" class="warn" style="display:none">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;">
+          <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
+          <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
+        <div>
+          <strong>Peringatan Bahasa:</strong> Teks Anda terdeteksi bukan Bahasa Inggris. Mohon pastikan seluruh kalimat ditulis dalam <strong>Bahasa Inggris</strong> agar generator gambar dapat memproses instruksi Anda dengan tepat.
+        </div>
+      </div>
+    </div>
+
+    <!-- Two-Column Working Area -->
+    <div class="row">
+      <!-- Target Column (Target Reference Image) -->
+      <div class="col" id="col-target">
+        <div class="card">
+          <div class="card-header-bar">
+            <span class="label">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+              Gambar Target Acuan
+            </span>
+            <span class="badge badge-neutral" style="font-size:11px;">Target yang Ditiru</span>
+          </div>
+          
+          <div class="imgbox-wrap">
+            <div class="imgbox target-imgbox">
+              <img id="target-img" alt="Gambar target acuan" title="Klik untuk memperbesar gambar">
+            </div>
+          </div>
+          
+          <p class="muted" style="font-size:12.5px; margin:4px 0 0;">
+            💡 <strong>Tujuan Anda:</strong> Cermati subjek, komposisi, warna, dan pencahayaan gambar acuan ini, lalu tulis deskripsi prompt untuk membuat ulang gambar yang serupa.
+          </p>
+        </div>
+      </div>
+
+      <!-- Generated Image & Input Column -->
+      <div class="col" id="col-result">
+        <div class="card">
+          <div class="card-header-bar">
+            <span class="label">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+              Hasil Gambar AI Anda
+            </span>
+            <span class="badge badge-primary" id="img-status-badge">Menunggu Input</span>
+          </div>
+
+          <!-- Image Container with Spinner -->
+          <div class="imgbox-wrap">
+            <div class="imgbox" id="result-box">
+              <div id="result-ph" class="img-placeholder">
+                <div class="placeholder-icon">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <rect width="18" height="18" x="3" y="3" rx="3"/>
+                    <circle cx="8.5" cy="8.5" r="1.5"/>
+                    <path d="m21 15-5-5L5 21"/>
+                  </svg>
+                </div>
+                <p class="placeholder-title">Belum ada gambar</p>
+                <p class="placeholder-sub">Tulis deskripsi prompt dalam Bahasa Inggris lalu klik Generate.</p>
+              </div>
+
+              <img id="result-img" class="hidden" alt="Hasil gambar AI" title="Klik untuk memperbesar gambar">
+              
+              <div class="spin">
+                <div class="spinner-ring"></div>
+                <div class="spin-text">Menghasilkan Gambar AI...</div>
+                <div class="spin-subtext">Mohon tunggu beberapa saat</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mode 1: IPE (In-Place Editing) UI -->
+          <div id="ipe-ui" class="input-panel hidden">
+            <div class="input-hint-row">
+              <span class="label">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+                Edit Teks Prompt (English):
+              </span>
+              <span class="key-tip">Tips: <kbd>Ctrl</kbd> + <kbd>Enter</kbd> untuk Generate</span>
+            </div>
+            <textarea id="ipe-text" placeholder="Describe the image in English. E.g., 'a tiny fluffy kitten guarding a large golden retriever...'"></textarea>
+            <div class="actions" style="justify-content:space-between; margin-top:10px;">
+              <span class="muted" style="font-size:12px;" id="ipe-char-count">0 kata</span>
+              <button id="btn-ipe" class="btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                <span>Generate Gambar</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Mode 2: CFU First Step UI -->
+          <div id="cfu-first" class="input-panel hidden">
+            <div class="input-hint-row">
+              <span class="label">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                Prompt Awal (English):
+              </span>
+              <span class="key-tip">Tips: <kbd>Ctrl</kbd> + <kbd>Enter</kbd> untuk Generate</span>
+            </div>
+            <textarea id="cfu-first-text" placeholder="Describe your initial image concept in English..."></textarea>
+            <div class="actions" style="justify-content:space-between; margin-top:10px;">
+              <span class="muted" style="font-size:12px;" id="cfu-first-char-count">0 kata</span>
+              <button id="btn-cfu-first" class="btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                <span>Generate Gambar Pertama</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Mode 2: CFU Conversational Follow-Up UI (Clean History, NO AI Assistant avatar) -->
+          <div id="cfu-chat-ui" class="input-panel hidden">
+            <div class="input-hint-row">
+              <span class="label">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                Instruksi Perubahan (Conversational Follow-Up)
+              </span>
+              <span class="key-tip">Tekan <kbd>Enter</kbd> untuk kirim</span>
+            </div>
+            
+            <!-- History Stream of Revision Instructions -->
+            <div class="chat" id="chat"></div>
+            
+            <div class="chat-input-row">
+              <input type="text" id="cfu-text" placeholder="Tuliskan instruksi perubahan dalam Bahasa Inggris (misal: 'make the lighting warmer, add more snow')..." autocomplete="off">
+              <button id="btn-cfu" class="btn">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                <span>Kirim Instruksi</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Researcher Debug Score -->
+          <div id="score-debug" class="score-debug-pill hidden">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            <span>Skor CLIP (Debug Peneliti): <strong id="score-val">-</strong></span>
+          </div>
+
+          <!-- Success Alert Card -->
+          <div id="done-ok" class="ok">
+            <div class="ok-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div class="ok-content">
+              <h4>Gambar Berhasil Mencapai Target Kemiripan! 🎉</h4>
+              <p>Gambar Anda sudah sesuai dengan target acuan. Silakan klik tombol <strong>Lanjut</strong> di bawah untuk melanjutkan.</p>
+            </div>
+          </div>
+
+          <!-- Generic Error Box -->
+          <div id="err" class="warn error-box" style="display:none"></div>
+
+          <!-- Bottom Navigation Actions -->
+          <div class="work-nav-actions">
+            <button id="btn-giveup" class="btn-ghost-danger hidden">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+              <span>Berhenti pada tugas ini</span>
+            </button>
+            <div style="flex:1"></div>
+            <button id="btn-next" class="btn btn-success btn-large hidden">
+              <span>Lanjut ke Tahap Berikutnya</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Screen 4: Break -->
+  <section id="s-break" class="card center-state-card hidden">
+    <div class="center-icon-wrap break-icon">
+      ☕
+    </div>
+    <h2>Waktunya Istirahat Sebentar</h2>
+    <p class="muted" style="font-size:15px; max-width:440px; margin:0 auto 16px;">
+      Tugas pertama telah selesai dengan baik! Silakan istirahat sejenak 1 sampai 2 menit untuk mengistirahatkan mata dan pikiran Anda.
+    </p>
+    
+    <div class="info-callout">
+      <div style="font-weight:700; color:var(--text-main); margin-bottom:4px; display:flex; align-items:center; gap:6px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        Informasi Tugas Selanjutnya
+      </div>
+      <div>
+        Pada tugas kedua nanti, Anda akan membuat ulang <strong>gambar target yang sama persis</strong>, namun menggunakan <strong>metode revisi yang kedua</strong>. Tekan tombol di bawah ketika Anda sudah siap.
+      </div>
+    </div>
+
+    <div class="actions" style="justify-content:center;">
+      <button id="btn-break" class="btn btn-large">
+        <span>Saya Siap, Lanjut ke Tugas Kedua</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+  </section>
+
+  <!-- Screen 5: Done -->
+  <section id="s-done" class="card center-state-card hidden">
+    <div class="center-icon-wrap done-icon">
+      🎓
+    </div>
+    <h2>Sesi Eksperimen Selesai! 🎉</h2>
+    <p class="muted" style="font-size:15px; max-width:460px; margin:0 auto 20px;">
+      Terima kasih banyak atas waktu dan kontribusi berharga Anda dalam penelitian Interaksi Manusia dan Komputer (IMK) ini.
+    </p>
+
+    <div class="info-callout" style="text-align:center;">
+      <span class="text-success">✓ Seluruh data prompt dan log iterasi Anda telah berhasil disimpan secara anonim.</span>
+      <p style="margin:8px 0 0; font-size:12px; color:var(--text-subtle);">
+        Silakan beri tahu peneliti eksperimen bahwa sesi Anda telah selesai.
+      </p>
+    </div>
+
+    <div class="actions" style="justify-content:center; margin-top:24px;">
+      <button class="secondary" onclick="localStorage.removeItem('pid'); location.reload();">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        <span>Kembali ke Halaman Awal</span>
+      </button>
+    </div>
+  </section>
 
 </main>
-<div style="text-align:center;margin:20px"><button class="link" id="btn-reset">Ganti partisipan</button></div>
+
+<!-- ==============================================================
+     PRODUCT TOUR OVERLAY COMPONENT
+     ============================================================== -->
+<div id="tour-backdrop" class="tour-backdrop hidden">
+  <!-- Glowing spotlight cutout -->
+  <div id="tour-spotlight-box" class="tour-spotlight-box">
+    <div class="tour-pulse-ring"></div>
+  </div>
+
+  <!-- Floating animated popover card -->
+  <div id="tour-popover" class="tour-popover">
+    <div class="tour-popover-header">
+      <div class="tour-badge-row">
+        <span class="badge badge-purple" id="tour-step-badge">Panduan Fitur</span>
+        <span class="tour-step-pill" id="tour-step-num">Langkah 1 / 8</span>
+      </div>
+      <button class="tour-btn-close" onclick="endProductTour(true)" title="Lewati Tur">✕</button>
+    </div>
+    <div class="tour-popover-body">
+      <h3 class="tour-popover-title" id="tour-popover-title">Judul Fitur</h3>
+      <p class="tour-popover-desc" id="tour-popover-desc">Deskripsi fitur langkah ini...</p>
+      <div class="tour-interactive-hint" id="tour-interactive-hint"></div>
+    </div>
+    <div class="tour-popover-footer">
+      <div class="tour-dots" id="tour-dots"></div>
+      <div class="tour-buttons">
+        <button class="btn secondary btn-sm" id="tour-prev-btn" onclick="tourPrev()">← Sebelumnya</button>
+        <button class="btn btn-sm" id="tour-next-btn" onclick="tourNext()">Lanjut →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Image Lightbox Modal for Zooming -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <div class="lightbox-content" onclick="event.stopPropagation()">
+    <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+    <img id="lightbox-img" src="" alt="Perbesar gambar">
+  </div>
+</div>
 
 <script>
 const $ = id => document.getElementById(id);
 const S = {pid:null, stage:null, mode:null, n:0, phase:'first', busy:false};
 const SCREENS = ['s-register','s-consent','s-work','s-break','s-done'];
+
+// Updated Stage Stepper mapping (7 stages)
+const STAGE_ORDER = ['register', 'consent', 'guide', 'task_1', 'break', 'task_2', 'done'];
+const STEP_IDS = {
+  'register': 'step-reg',
+  'consent': 'step-consent',
+  'guide': 'step-guide',
+  'task_1': 'step-t1',
+  'break': 'step-break',
+  'task_2': 'step-t2',
+  'done': 'step-done'
+};
+
+function updateStepper(currentStage) {
+  let activeIdx = STAGE_ORDER.indexOf(currentStage);
+  if (activeIdx === -1) {
+    if (currentStage.startsWith('practice')) activeIdx = STAGE_ORDER.indexOf('guide');
+    else activeIdx = 0;
+  }
+
+  STAGE_ORDER.forEach((st, idx) => {
+    const el = $(STEP_IDS[st]);
+    if (!el) return;
+    el.classList.remove('active', 'completed');
+    if (idx < activeIdx) {
+      el.classList.add('completed');
+    } else if (idx === activeIdx) {
+      el.classList.add('active');
+    }
+  });
+}
 
 async function api(path, body){
   const opt = body ? {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)} : {};
@@ -141,120 +1773,716 @@ async function api(path, body){
   if(!r.ok) throw new Error(j.error || 'Terjadi kesalahan ('+r.status+')');
   return j;
 }
-function show(id){ SCREENS.forEach(s=>$(s).classList.toggle('hidden', s!==id)); }
-function setErr(msg){ const e=$('err'); e.textContent=msg||''; e.style.display=msg?'block':'none'; }
-function setBusy(b){
-  S.busy=b; $('result-box').classList.toggle('busy',b);
-  ['btn-ipe','btn-cfu-first','btn-cfu','btn-giveup'].forEach(i=>$(i).disabled=b);
-}
-function setImage(uri){ $('result-img').src=uri; $('result-img').classList.remove('hidden'); $('result-ph').classList.add('hidden'); }
-function langWarn(flag){ $('lang-warn').style.display = flag ? 'block':'none'; }
-function addBubble(text, me){
-  const d=document.createElement('div'); d.className='bubble '+(me?'me':'sys'); d.textContent=text;
-  $('chat').appendChild(d); $('chat').scrollTop=$('chat').scrollHeight;
+
+function show(id){ 
+  SCREENS.forEach(s => $(s).classList.toggle('hidden', s !== id));
+  if (id === 's-register') {
+    updateStepper('register');
+    $('pid-container').classList.add('hidden');
+    $('btn-reset').classList.add('hidden');
+  } else {
+    $('pid-container').classList.remove('hidden');
+    $('btn-reset').classList.remove('hidden');
+  }
 }
 
+function setErr(msg){ 
+  const e = $('err'); 
+  e.textContent = msg || ''; 
+  e.style.display = msg ? 'flex' : 'none'; 
+}
+
+function setBusy(b){
+  S.busy = b; 
+  $('result-box').classList.toggle('busy', b);
+  ['btn-ipe','btn-cfu-first','btn-cfu','btn-giveup'].forEach(i => {
+    const el = $(i);
+    if(el) el.disabled = b;
+  });
+  if ($('img-status-badge')) {
+    $('img-status-badge').textContent = b ? 'Sedang Memproses...' : (S.n > 0 ? 'Iterasi #' + S.n : 'Siap');
+  }
+}
+
+function setImage(uri){ 
+  $('result-img').src = uri; 
+  $('result-img').classList.remove('hidden'); 
+  $('result-ph').classList.add('hidden'); 
+  if ($('img-status-badge')) {
+    $('img-status-badge').textContent = 'Iterasi #' + S.n;
+  }
+}
+
+function langWarn(flag){ 
+  $('lang-warn').style.display = flag ? 'flex' : 'none'; 
+}
+
+// Add instruction item to CFU history stream (Clean history, NO AI Assistant avatar/persona)
+function addBubble(text, me){
+  const item = document.createElement('div');
+  item.className = 'cfu-history-item' + (!me ? ' initial' : '');
+
+  const meta = document.createElement('div');
+  meta.className = 'cfu-history-meta';
+  
+  const labelSpan = document.createElement('span');
+  labelSpan.textContent = !me ? 'Prompt Awal' : ('Instruksi Revisi (Iterasi #' + S.n + ')');
+
+  meta.appendChild(labelSpan);
+
+  const textDiv = document.createElement('div');
+  textDiv.className = 'cfu-history-text';
+  textDiv.textContent = text;
+
+  item.appendChild(meta);
+  item.appendChild(textDiv);
+
+  $('chat').appendChild(item); 
+  $('chat').scrollTop = $('chat').scrollHeight;
+}
+
+function updateIterationBadge(count) {
+  const b = $('badge-iteration');
+  if (b) {
+    b.textContent = count > 0 ? 'Iterasi #' + count : 'Iterasi #0';
+  }
+}
+
+// ==============================================================
+// PRODUCT TOUR ENGINE (Step-by-step feature walkthrough with animated spotlight)
+// ==============================================================
+let tourSteps = [];
+let tourCurrentIdx = 0;
+let tourIsInitialGuide = false;
+let tourActive = false;
+
+function buildTourSteps(fullGuide) {
+  if (fullGuide) {
+    return [
+      {
+        targetId: 'col-target',
+        badge: '🎯 Target Acuan',
+        title: '1. Gambar Target yang Harus Ditiru',
+        desc: 'Di sebelah kiri ini adalah gambar target acuan. Perhatikan subjek, komposisi, warna, dan pencahayaannya. Tugas Anda adalah membuat gambar yang semirip mungkin dengan acuan ini.',
+        hint: '💡 Anda dapat mengklik gambar target kapan saja untuk memperbesar (zoom).',
+        prepare: () => {
+          $('col-target').classList.remove('hidden');
+          $('target-img').src = '/static/target.png';
+          ['ipe-ui','cfu-first','cfu-chat-ui'].forEach(i => $(i).classList.add('hidden'));
+        }
+      },
+      {
+        targetId: 'result-box',
+        badge: '🎨 Hasil Anda',
+        title: '2. Area Hasil Gambar AI',
+        desc: 'Di sebelah kanan ini adalah tempat gambar buatan Anda akan muncul setiap kali Anda melakukan generate. Anda dapat langsung membandingkan hasilnya dengan gambar target acuan di sebelah kiri.',
+        hint: '🖼️ Hasil gambar akan diperbarui setiap kali Anda melakukan iterasi revisi.',
+        prepare: () => {
+          $('col-target').classList.remove('hidden');
+        }
+      },
+      {
+        targetId: 'ipe-ui',
+        badge: '✏️ Metode 1: IPE',
+        title: '3. In-Place Editing (Edit Prompt Langsung)',
+        desc: 'Pada metode <b>In-Place Editing (IPE)</b>, seluruh kalimat deskripsi gambar berada di dalam kotak teks ini. Untuk memperbaiki gambar, Anda <b>langsung mengubah, menambah, atau menghapus kata</b> pada kalimat ini.',
+        hint: '✏️ Contoh teks contoh sudah kami siapkan di kotak. Coba ubah atau tambahkan kata!',
+        prepare: () => {
+          ['cfu-first','cfu-chat-ui'].forEach(i => $(i).classList.add('hidden'));
+          $('ipe-ui').classList.remove('hidden');
+          $('ipe-text').value = 'a cute fluffy kitten guarding a very large sleeping golden retriever, soft lighting';
+          updateWordCount('ipe-text', 'ipe-char-count');
+        }
+      },
+      {
+        targetId: 'btn-ipe',
+        badge: '✏️ Metode 1: IPE',
+        title: '4. Tombol Generate Gambar (IPE)',
+        desc: 'Setelah mengedit teks prompt, klik tombol <b>Generate Gambar</b> (atau tekan <kbd>Ctrl</kbd> + <kbd>Enter</kbd>). Sistem akan membuat gambar baru dari keseluruhan kalimat prompt yang telah Anda edit.',
+        hint: '⚡ Ingat: Tombol ini hanya aktif jika teks prompt telah Anda ubah dari iterasi sebelumnya.',
+        prepare: () => {
+          $('ipe-ui').classList.remove('hidden');
+        }
+      },
+      {
+        targetId: 'cfu-first',
+        badge: '💬 Metode 2: CFU',
+        title: '5. Prompt Awal (Langkah Pertama CFU)',
+        desc: 'Sekarang mari pelajari metode kedua: <b>Conversational Follow-Up (CFU)</b>. Pada langkah pertama, Anda menuliskan prompt awal untuk membuat gambar pertama Anda.',
+        hint: '🚀 Pada CFU, kotak prompt awal ini hanya diisi satu kali saat memulai tugas.',
+        prepare: () => {
+          ['ipe-ui','cfu-chat-ui'].forEach(i => $(i).classList.add('hidden'));
+          $('cfu-first').classList.remove('hidden');
+          $('cfu-first-text').value = 'a kitten sitting beside a sleeping dog';
+          updateWordCount('cfu-first-text', 'cfu-first-char-count');
+        }
+      },
+      {
+        targetId: 'cfu-text',
+        badge: '💬 Metode 2: CFU',
+        title: '6. Instruksi Perubahan Bertahap',
+        desc: 'Pada langkah berikutnya di CFU, Anda <b>TIDAK perlu mengetik ulang seluruh kalimat prompt</b>! Cukup ketik instruksi perubahan singkat di sini (misal: <i>"make the dog a large Golden Retriever"</i>).',
+        hint: '💡 Anda cukup menyampaikan apa yang ingin diubah atau ditambahkan.',
+        prepare: () => {
+          ['ipe-ui','cfu-first'].forEach(i => $(i).classList.add('hidden'));
+          $('cfu-chat-ui').classList.remove('hidden');
+          $('cfu-text').value = 'make the dog a large Golden Retriever and emphasize the size difference';
+          if (!$('chat').children.length) {
+            addBubble('a kitten sitting beside a sleeping dog', false);
+          }
+        }
+      },
+      {
+        targetId: 'chat',
+        badge: '💬 Metode 2: CFU',
+        title: '7. Riwayat Instruksi Revisi',
+        desc: 'Setiap instruksi yang Anda kirimkan tercatat rapi di riwayat ini. Anda dapat dengan mudah melihat urutan penyesuaian yang telah Anda instruksikan dari iterasi ke iterasi.',
+        hint: '📜 Memudahkan Anda melacak revisi yang sudah berhasil diterapkan.',
+        prepare: () => {
+          $('cfu-chat-ui').classList.remove('hidden');
+        }
+      },
+      {
+        targetId: 'btn-cfu',
+        badge: '💬 Metode 2: CFU',
+        title: '8. Mengirim Instruksi Revisi',
+        desc: 'Klik tombol <b>Kirim Instruksi</b> atau tekan tombol <kbd>Enter</kbd> pada keyboard. Sistem otomatis menerjemahkan instruksi Anda dan menghasilkan gambar versi terbaru.',
+        hint: '⌨️ Tekan tombol Enter pada keyboard untuk mengirim lebih cepat.',
+        prepare: () => {
+          $('cfu-chat-ui').classList.remove('hidden');
+        }
+      },
+      {
+        targetId: 'work-title',
+        badge: '🎉 Tur Selesai',
+        title: '9. Anda Siap Memulai Tugas Eksperimen!',
+        desc: 'Bagus sekali! Anda telah memahami cara kerja kedua metode (IPE dan CFU). Sekarang, mari kita mulai Tugas 1 dengan gambar target acuan sesungguhnya.',
+        hint: '🚀 Tekan tombol di bawah untuk masuk ke Tugas 1.',
+        prepare: () => {
+          ['ipe-ui','cfu-first','cfu-chat-ui'].forEach(i => $(i).classList.add('hidden'));
+        }
+      }
+    ];
+  } else {
+    // Quick in-task tour based on current mode
+    if (S.mode === 'IPE') {
+      return [
+        {
+          targetId: 'col-target',
+          badge: '🎯 Target Acuan',
+          title: 'Gambar Target yang Harus Ditiru',
+          desc: 'Perhatikan detail gambar ini. Tujuan Anda adalah membuat gambar yang semirip mungkin dengan acuan ini.',
+          hint: '💡 Klik gambar untuk memperbesar.'
+        },
+        {
+          targetId: 'result-box',
+          badge: '🎨 Hasil Anda',
+          title: 'Hasil Gambar Anda',
+          desc: 'Gambar hasil generate Anda ditampilkan di sini.',
+          hint: '🖼️ Bandingkan langsung dengan gambar target di kiri.'
+        },
+        {
+          targetId: 'ipe-ui',
+          badge: '✏️ Metode IPE',
+          title: 'Edit Prompt Langsung',
+          desc: 'Ubah atau tambahkan kata langsung pada kalimat prompt di kotak ini untuk menyempurnakan gambar.',
+          hint: '⌨️ Tekan Ctrl + Enter untuk generate cepat.'
+        },
+        {
+          targetId: 'btn-ipe',
+          badge: '✏️ Metode IPE',
+          title: 'Generate Gambar',
+          desc: 'Klik untuk memproses teks prompt yang sudah Anda ubah menjadi gambar baru.',
+          hint: '⚡ Wajib mengubah teks sebelum generate berikutnya.'
+        }
+      ];
+    } else {
+      return [
+        {
+          targetId: 'col-target',
+          badge: '🎯 Target Acuan',
+          title: 'Gambar Target yang Harus Ditiru',
+          desc: 'Perhatikan detail gambar target acuan ini.',
+          hint: '💡 Klik gambar untuk memperbesar.'
+        },
+        {
+          targetId: 'result-box',
+          badge: '🎨 Hasil Anda',
+          title: 'Hasil Gambar Anda',
+          desc: 'Gambar hasil Anda ditampilkan di sini.',
+          hint: '🖼️ Bandingkan langsung dengan target di kiri.'
+        },
+        {
+          targetId: (S.n === 0 ? 'cfu-first' : 'cfu-text'),
+          badge: '💬 Metode CFU',
+          title: (S.n === 0 ? 'Prompt Awal CFU' : 'Instruksi Revisi CFU'),
+          desc: (S.n === 0 ? 'Tuliskan deskripsi ide awal gambar pertama Anda.' : 'Ketik instruksi perubahan singkat tanpa mengulang seluruh prompt.'),
+          hint: '💡 Tulis dalam Bahasa Inggris.'
+        },
+        {
+          targetId: (S.n === 0 ? 'btn-cfu-first' : 'btn-cfu'),
+          badge: '💬 Metode CFU',
+          title: (S.n === 0 ? 'Generate Pertama' : 'Kirim Instruksi'),
+          desc: 'Klik untuk menerapkan perubahan dan menghasilkan gambar baru.',
+          hint: '⌨️ Bisa gunakan tombol Enter untuk mengirim.'
+        }
+      ];
+    }
+  }
+}
+
+function startProductTour(isFullGuide) {
+  tourIsInitialGuide = isFullGuide;
+  tourSteps = buildTourSteps(isFullGuide);
+  tourCurrentIdx = 0;
+  tourActive = true;
+  
+  $('tour-backdrop').classList.remove('hidden');
+  renderTourStep();
+}
+
+function renderTourStep() {
+  if (!tourSteps || tourCurrentIdx >= tourSteps.length) {
+    endProductTour(false);
+    return;
+  }
+
+  const step = tourSteps[tourCurrentIdx];
+  if (typeof step.prepare === 'function') {
+    step.prepare();
+  }
+
+  // Update Popover Content
+  $('tour-step-badge').textContent = step.badge || 'Panduan Fitur';
+  $('tour-step-num').textContent = `Langkah ${tourCurrentIdx + 1} / ${tourSteps.length}`;
+  $('tour-popover-title').textContent = step.title;
+  $('tour-popover-desc').innerHTML = step.desc;
+  
+  const hintEl = $('tour-interactive-hint');
+  if (step.hint) {
+    hintEl.innerHTML = step.hint;
+    hintEl.style.display = 'flex';
+  } else {
+    hintEl.style.display = 'none';
+  }
+
+  // Prev / Next button states
+  $('tour-prev-btn').disabled = (tourCurrentIdx === 0);
+  if (tourCurrentIdx === tourSteps.length - 1) {
+    $('tour-next-btn').innerHTML = tourIsInitialGuide 
+      ? `<span>Mulai Tugas 1</span> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>`
+      : `<span>Selesai</span>`;
+    $('tour-next-btn').className = 'btn btn-sm btn-success';
+  } else {
+    $('tour-next-btn').innerHTML = `<span>Lanjut</span> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>`;
+    $('tour-next-btn').className = 'btn btn-sm btn-primary';
+  }
+
+  // Render Indicator Dots
+  const dotsContainer = $('tour-dots');
+  dotsContainer.innerHTML = '';
+  tourSteps.forEach((_, idx) => {
+    const d = document.createElement('span');
+    d.className = 'tour-dot' + (idx === tourCurrentIdx ? ' active' : '');
+    dotsContainer.appendChild(d);
+  });
+
+  // Spotlight target element
+  const targetEl = $(step.targetId);
+  positionSpotlight(targetEl);
+}
+
+function positionSpotlight(targetEl) {
+  if (!targetEl) return;
+  
+  targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  
+  setTimeout(() => {
+    const rect = targetEl.getBoundingClientRect();
+    const padding = 8;
+    
+    const spot = $('tour-spotlight-box');
+    spot.style.top = (rect.top - padding) + 'px';
+    spot.style.left = (rect.left - padding) + 'px';
+    spot.style.width = (rect.width + padding * 2) + 'px';
+    spot.style.height = (rect.height + padding * 2) + 'px';
+
+    const pop = $('tour-popover');
+    const popWidth = pop.offsetWidth || 390;
+    const popHeight = pop.offsetHeight || 220;
+    
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+
+    let top = 0;
+    let left = 0;
+
+    // Check if space below
+    if (rect.bottom + popHeight + 20 < viewportHeight) {
+      top = rect.bottom + 16;
+      left = rect.left + (rect.width / 2) - (popWidth / 2);
+    } 
+    // Check if space above
+    else if (rect.top - popHeight - 20 > 0) {
+      top = rect.top - popHeight - 16;
+      left = rect.left + (rect.width / 2) - (popWidth / 2);
+    }
+    // Else place side by side
+    else if (rect.right + popWidth + 20 < viewportWidth) {
+      top = rect.top;
+      left = rect.right + 16;
+    } else {
+      top = rect.top;
+      left = Math.max(16, rect.left - popWidth - 16);
+    }
+
+    // Clamp inside viewport
+    left = Math.max(16, Math.min(left, viewportWidth - popWidth - 16));
+    top = Math.max(16, Math.min(top, viewportHeight - popHeight - 16));
+
+    pop.style.top = top + 'px';
+    pop.style.left = left + 'px';
+  }, 120);
+}
+
+function tourNext() {
+  if (tourCurrentIdx < tourSteps.length - 1) {
+    tourCurrentIdx++;
+    renderTourStep();
+  } else {
+    endProductTour(false);
+  }
+}
+
+function tourPrev() {
+  if (tourCurrentIdx > 0) {
+    tourCurrentIdx--;
+    renderTourStep();
+  }
+}
+
+async function endProductTour(skipAdvance) {
+  tourActive = false;
+  $('tour-backdrop').classList.add('hidden');
+  
+  if (tourIsInitialGuide && !skipAdvance) {
+    try {
+      route(await api('/api/advance', {pid: S.pid, from_stage: 'guide'}));
+    } catch(e) {
+      // Fallback: reload state
+      try {
+        route(await api('/api/state?pid=' + encodeURIComponent(S.pid)));
+      } catch(err) {
+        setErr(e.message);
+      }
+    }
+  } else if (tourIsInitialGuide && skipAdvance) {
+    // If skipped during initial guide, advance to task_1
+    try {
+      route(await api('/api/advance', {pid: S.pid, from_stage: 'guide'}));
+    } catch(e) {
+      try {
+        route(await api('/api/state?pid=' + encodeURIComponent(S.pid)));
+      } catch(err) {
+        setErr(e.message);
+      }
+    }
+  } else {
+    // Just restore current task inputs
+    prepareInputs();
+  }
+}
+
+// Window resize and scroll recalculation during tour
+window.addEventListener('resize', () => {
+  if (tourActive && tourSteps[tourCurrentIdx]) {
+    positionSpotlight($(tourSteps[tourCurrentIdx].targetId));
+  }
+});
+
+// ==============================================================
+// APPLICATION ROUTING & WORKSPACE LIFECYCLE
+// ==============================================================
 async function route(st){
-  S.pid=st.pid; S.stage=st.stage; S.mode=st.mode; localStorage.setItem('pid', st.pid);
-  $('pidlabel').textContent = 'Kode: '+st.pid;
-  if(st.stage==='consent') return show('s-consent');
-  if(st.stage==='break') return show('s-break');
-  if(st.stage==='done') return show('s-done');
-  if(st.stage.startsWith('practice')) return openWork(true, st);
+  S.pid = st.pid; 
+  S.stage = st.stage; 
+  S.mode = st.mode; 
+  localStorage.setItem('pid', st.pid);
+  
+  $('pidlabel').textContent = 'Partisipan: ' + st.pid;
+  updateStepper(st.stage);
+
+  if (st.stage === 'task_1' && st.mode) $('step-sub-t1').textContent = st.mode;
+  if (st.stage === 'task_2' && st.mode) $('step-sub-t2').textContent = st.mode;
+
+  if(st.stage === 'consent') return show('s-consent');
+  if(st.stage === 'guide' || st.stage.startsWith('practice')) {
+    updateStepper('guide');
+    show('s-work');
+    prepareTourWorkspace();
+    startProductTour(true);
+    return;
+  }
+  if(st.stage === 'break') return show('s-break');
+  if(st.stage === 'done') return show('s-done');
   if(st.stage.startsWith('task')) return openWork(false, st);
 }
 
+function prepareTourWorkspace() {
+  resetWork();
+  $('col-target').classList.remove('hidden');
+  $('target-img').src = '/static/target.png';
+  $('work-title').textContent = 'Tur Panduan Fitur: IPE & CFU';
+  $('work-desc').textContent = 'Ikuti sorotan langkah demi langkah untuk memahami cara kerja kedua strategi revisi prompt.';
+  $('badge-condition').textContent = '🎯 Panduan Fitur';
+  $('badge-iteration').textContent = 'Contoh Fitur';
+}
+
 function resetWork(){
-  S.n=0; S.phase='first'; setErr(''); langWarn(false);
-  $('result-img').classList.add('hidden'); $('result-ph').classList.remove('hidden');
-  $('chat').innerHTML=''; $('ipe-text').value=''; $('cfu-first-text').value=''; $('cfu-text').value='';
-  $('done-ok').style.display='none'; $('btn-next').disabled=false; $('btn-next').classList.add('hidden'); $('btn-giveup').classList.add('hidden');
-  ['ipe-ui','cfu-first','cfu-chat-ui'].forEach(i=>$(i).classList.add('hidden'));
+  S.n = 0; 
+  S.phase = 'first'; 
+  setErr(''); 
+  langWarn(false);
+  updateIterationBadge(0);
+  
+  $('result-img').classList.add('hidden'); 
+  $('result-ph').classList.remove('hidden');
+  $('chat').innerHTML = ''; 
+  $('ipe-text').value = ''; 
+  $('cfu-first-text').value = ''; 
+  $('cfu-text').value = '';
+  $('done-ok').style.display = 'none'; 
+  $('btn-next').disabled = false; 
+  $('btn-next').classList.add('hidden'); 
+  $('btn-giveup').classList.add('hidden');
+  
+  ['ipe-ui','cfu-first','cfu-chat-ui'].forEach(i => $(i).classList.add('hidden'));
 }
 
 async function openWork(practice, st){
-  resetWork(); show('s-work');
-  S.practice = practice;
-  $('col-target').classList.toggle('hidden', practice);
-  const modeName = S.mode==='IPE' ? 'Mengedit prompt langsung' : 'Instruksi lanjutan lewat percakapan';
+  resetWork(); 
+  show('s-work');
+  
+  const modeName = S.mode === 'IPE' ? 'In-Place Editing (Edit Prompt Langsung)' : 'Conversational Follow-Up (Instruksi Lanjutan)';
+  const condBadge = $('badge-condition');
+  if (condBadge) {
+    condBadge.textContent = S.mode === 'IPE' ? '✏️ In-Place Editing' : '💬 Conversational Follow-Up';
+  }
+  
   const stepNo = st.stage.slice(-1);
-  if(practice){
-    $('work-title').textContent = 'Latihan '+stepNo+' dari 2: '+modeName;
-    $('work-desc').textContent = S.mode==='IPE'
-      ? 'Tulis sebuah deskripsi gambar dalam bahasa Inggris (misalnya "a cat on a sofa"), tekan Generate, lalu ubah teks prompt dan Generate lagi. Latihan ini tidak dinilai.'
-      : 'Tulis deskripsi gambar dalam bahasa Inggris, tekan Generate, lalu sampaikan perubahan yang diinginkan lewat kotak percakapan. Latihan ini tidak dinilai.';
-    $('btn-next').textContent='Selesai latihan'; $('btn-next').disabled=true; $('btn-next').classList.remove('hidden');
+  $('work-title').textContent = 'Tugas Utama ' + stepNo + ' dari 2: ' + modeName;
+  $('work-desc').textContent = 'Buat ulang gambar target di sebelah kiri semirip mungkin. Tulis seluruh teks dalam Bahasa Inggris. Lanjutkan merevisi hingga gambar memenuhi kriteria target.';
+  try{
+    const t = await api('/api/task/start', {pid: S.pid});
+    $('target-img').src = t.target_url + '?t=' + Date.now();
+    S.n = t.n_iter;
+    updateIterationBadge(S.n);
+    if(t.done){ finishTask(); return; }
     prepareInputs();
-  } else {
-    $('work-title').textContent = 'Tugas '+stepNo+' dari 2: '+modeName;
-    $('work-desc').textContent = 'Buat ulang gambar target di sebelah kiri semirip mungkin. Tulis semua teks dalam bahasa Inggris. Lanjutkan merevisi sampai sistem menyatakan gambar sudah sesuai.';
-    try{
-      const t = await api('/api/task/start', {pid:S.pid});
-      $('target-img').src = t.target_url+'?t='+Date.now();
-      S.n = t.n_iter;
-      if(t.done){ finishTask(); return; }
-      prepareInputs();
-      if(t.last_image){ setImage(t.last_image); if(t.prompt) $('ipe-text').value=t.prompt; }
-      $('btn-giveup').classList.remove('hidden');
-    }catch(e){ setErr(e.message); }
+    if(t.last_image){ 
+      setImage(t.last_image); 
+      if(t.prompt) $('ipe-text').value = t.prompt; 
+    }
+    $('btn-giveup').classList.remove('hidden');
+  } catch(e){ 
+    setErr(e.message); 
   }
 }
 
 function prepareInputs(){
-  if(S.mode==='IPE'){ $('ipe-ui').classList.remove('hidden'); }
-  else if(S.n===0){ $('cfu-first').classList.remove('hidden'); }
-  else { $('cfu-chat-ui').classList.remove('hidden'); }
+  if(S.mode === 'IPE'){ 
+    $('ipe-ui').classList.remove('hidden'); 
+    setTimeout(() => $('ipe-text').focus(), 150);
+  } else if(S.n === 0){ 
+    $('cfu-first').classList.remove('hidden'); 
+    setTimeout(() => $('cfu-first-text').focus(), 150);
+  } else { 
+    $('cfu-chat-ui').classList.remove('hidden'); 
+    setTimeout(() => $('cfu-text').focus(), 150);
+  }
 }
 
 async function doStep(text){
   if(S.busy) return;
-  setErr(''); setBusy(true);
+  setErr(''); 
+  setBusy(true);
   try{
-    const r = await api(S.practice ? '/api/practice/step' : '/api/task/step', {pid:S.pid, text});
-    if(r.score!=null){ $('score-debug').classList.remove('hidden'); $('score-val').textContent=r.score+' ('+r.gen_s+' detik)'; }
-    setImage(r.image); S.n = S.practice ? r.n : S.n+1; langWarn(r.non_english);
-    if(S.mode==='IPE' && r.prompt!=null) $('ipe-text').value = r.prompt;
-    if(S.mode==='CFU'){
-      if($('cfu-chat-ui').classList.contains('hidden')){ $('cfu-first').classList.add('hidden'); $('cfu-chat-ui').classList.remove('hidden'); addBubble('Gambar pertama dibuat dari prompt Anda.', false); }
-      else { addBubble(text, true); addBubble(r.llm_error ? 'Asisten tidak dapat memproses instruksi. Coba kalimat lain.' : 'Gambar diperbarui.', false); }
-      $('cfu-text').value='';
+    const r = await api('/api/task/step', {pid: S.pid, text});
+    if(r.score != null){ 
+      $('score-debug').classList.remove('hidden'); 
+      $('score-val').textContent = r.score + ' (' + r.gen_s + ' detik)'; 
     }
-    if(S.practice) $('btn-next').disabled=false;
-    else if(r.done){ finishTask(); }
-  }catch(e){ setErr(e.message); }
-  finally{ setBusy(false); }
+    S.n = S.n + 1;
+    setImage(r.image); 
+    updateIterationBadge(S.n);
+    langWarn(r.non_english);
+
+    if(S.mode === 'IPE' && r.prompt != null) {
+      $('ipe-text').value = r.prompt;
+    }
+    
+    if(S.mode === 'CFU'){
+      if($('cfu-chat-ui').classList.contains('hidden')){ 
+        $('cfu-first').classList.add('hidden'); 
+        $('cfu-chat-ui').classList.remove('hidden'); 
+        addBubble(text, false); // initial prompt in history
+      } else { 
+        addBubble(text, true); // follow-up revision instruction in history
+      }
+      $('cfu-text').value = '';
+    }
+    
+    if(r.done){ 
+      finishTask(); 
+    }
+  } catch(e){ 
+    setErr(e.message); 
+  } finally{ 
+    setBusy(false); 
+  }
 }
 
 function finishTask(){
-  $('done-ok').style.display='block'; $('btn-next').textContent='Lanjut'; $('btn-next').classList.remove('hidden');
+  $('done-ok').style.display = 'flex'; 
+  $('btn-next').innerHTML = `<span>Lanjut ke Tahap Berikutnya</span> <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>`; 
+  $('btn-next').classList.remove('hidden');
   $('btn-giveup').classList.add('hidden');
-  ['ipe-ui','cfu-first','cfu-chat-ui'].forEach(i=>$(i).classList.add('hidden'));
+  ['ipe-ui','cfu-first','cfu-chat-ui'].forEach(i => $(i).classList.add('hidden'));
 }
 
-$('btn-register').onclick = async ()=>{
-  const pid=$('pid-input').value.trim(); $('reg-err').style.display='none';
-  const order=new URLSearchParams(location.search).get('order');
-  try{ route(await api('/api/register', {pid, order})); }
-  catch(e){ $('reg-err').textContent=e.message; $('reg-err').style.display='block'; }
-};
-$('consent-check').onchange = e=>{ $('btn-consent').disabled=!e.target.checked; };
-$('btn-consent').onclick = async ()=>{ route(await api('/api/advance', {pid:S.pid, from_stage:'consent'})); };
-$('btn-break').onclick = async ()=>{ route(await api('/api/advance', {pid:S.pid, from_stage:'break'})); };
-$('btn-ipe').onclick = ()=>doStep($('ipe-text').value);
-$('btn-cfu-first').onclick = ()=>doStep($('cfu-first-text').value);
-$('btn-cfu').onclick = ()=>doStep($('cfu-text').value);
-$('cfu-text').addEventListener('keydown', e=>{ if(e.key==='Enter') doStep($('cfu-text').value); });
-$('btn-next').onclick = async ()=>{ try{ route(await api('/api/advance', {pid:S.pid, from_stage:S.stage})); }catch(e){ setErr(e.message); } };
-$('btn-giveup').onclick = async ()=>{
-  if(!confirm('Yakin ingin berhenti pada tugas ini? Tugas tidak bisa dilanjutkan lagi.')) return;
-  try{ await api('/api/task/giveup', {pid:S.pid}); finishTask(); $('done-ok').style.display='none'; }catch(e){ setErr(e.message); }
-};
-$('btn-reset').onclick = ()=>{ localStorage.removeItem('pid'); location.reload(); };
+// Lightbox modal functions
+function openLightbox(src) {
+  if(!src) return;
+  $('lightbox-img').src = src;
+  $('lightbox').classList.add('active');
+}
+function closeLightbox() {
+  $('lightbox').classList.remove('active');
+}
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    closeLightbox();
+    if (tourActive) endProductTour(true);
+  }
+});
+$('target-img').addEventListener('click', () => {
+  if ($('target-img').src) openLightbox($('target-img').src);
+});
+$('result-img').addEventListener('click', () => {
+  if ($('result-img').src && !$('result-img').classList.contains('hidden')) {
+    openLightbox($('result-img').src);
+  }
+});
 
+// Word counter helper
+function updateWordCount(textareaId, counterId) {
+  const el = $(textareaId);
+  const counter = $(counterId);
+  if (!el || !counter) return;
+  const count = el.value.trim() ? el.value.trim().split(/\s+/).length : 0;
+  counter.textContent = count + ' kata';
+}
+$('ipe-text').addEventListener('input', () => updateWordCount('ipe-text', 'ipe-char-count'));
+$('cfu-first-text').addEventListener('input', () => updateWordCount('cfu-first-text', 'cfu-first-char-count'));
+
+// Keyboard shortcuts for smoother UX
+$('pid-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') $('btn-register').click();
+});
+$('ipe-text').addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+    e.preventDefault();
+    $('btn-ipe').click();
+  }
+});
+$('cfu-first-text').addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+    e.preventDefault();
+    $('btn-cfu-first').click();
+  }
+});
+$('cfu-text').addEventListener('keydown', e => { 
+  if(e.key === 'Enter') {
+    e.preventDefault();
+    doStep($('cfu-text').value); 
+  }
+});
+
+// Button events
+$('btn-register').onclick = async ()=>{
+  const pid = $('pid-input').value.trim(); 
+  $('reg-err').style.display = 'none';
+  if (!pid) {
+    $('reg-err').textContent = 'Mohon masukkan kode partisipan terlebih dahulu.';
+    $('reg-err').style.display = 'flex';
+    return;
+  }
+  const order = new URLSearchParams(location.search).get('order');
+  try{ 
+    route(await api('/api/register', {pid, order})); 
+  } catch(e){ 
+    $('reg-err').textContent = e.message; 
+    $('reg-err').style.display = 'flex'; 
+  }
+};
+
+$('consent-check').onchange = e => { 
+  $('btn-consent').disabled = !e.target.checked; 
+};
+
+$('btn-consent').onclick = async ()=>{ 
+  route(await api('/api/advance', {pid: S.pid, from_stage: 'consent'})); 
+};
+
+$('btn-break').onclick = async ()=>{ 
+  route(await api('/api/advance', {pid: S.pid, from_stage: 'break'})); 
+};
+
+$('btn-ipe').onclick = () => doStep($('ipe-text').value);
+$('btn-cfu-first').onclick = () => doStep($('cfu-first-text').value);
+$('btn-cfu').onclick = () => doStep($('cfu-text').value);
+
+$('btn-next').onclick = async ()=>{ 
+  try{ 
+    route(await api('/api/advance', {pid: S.pid, from_stage: S.stage})); 
+  } catch(e){ 
+    setErr(e.message); 
+  } 
+};
+
+$('btn-giveup').onclick = async ()=>{
+  if(!confirm('Apakah Anda yakin ingin berhenti pada tugas ini? Tugas ini tidak dapat dilanjutkan lagi.')) return;
+  try{ 
+    await api('/api/task/giveup', {pid: S.pid}); 
+    finishTask(); 
+    $('done-ok').style.display = 'none'; 
+  } catch(e){ 
+    setErr(e.message); 
+  }
+};
+
+$('btn-reset').onclick = ()=>{ 
+  if(confirm('Apakah Anda yakin ingin berganti kode partisipan? Sesi di halaman ini akan dialihkan ke layar pendaftaran.')) {
+    localStorage.removeItem('pid'); 
+    location.reload(); 
+  }
+};
+
+// Initializer
 (async function init(){
-  try{ const c=await api('/api/config'); $('mockbar').classList.toggle('hidden', !c.mock); }catch(e){}
+  try{ 
+    const c = await api('/api/config'); 
+    $('mockbar').classList.toggle('hidden', !c.mock); 
+  } catch(e){}
+  
   const pid = localStorage.getItem('pid');
-  if(pid){ try{ return route(await api('/api/state?pid='+encodeURIComponent(pid))); }catch(e){ localStorage.removeItem('pid'); } }
+  if(pid){ 
+    try{ 
+      return route(await api('/api/state?pid=' + encodeURIComponent(pid))); 
+    } catch(e){ 
+      localStorage.removeItem('pid'); 
+    } 
+  }
   show('s-register');
 })();
 </script>

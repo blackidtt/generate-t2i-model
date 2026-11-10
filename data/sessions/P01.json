@@ -1,0 +1,30 @@
+{
+  "pid": "P01",
+  "order": "AB",
+  "stage": "task_1",
+  "created": 1793792929.7681236,
+  "practice": {
+    "IPE": {
+      "prompt": "",
+      "n": 0
+    },
+    "CFU": {
+      "prompt": "",
+      "n": 0
+    }
+  },
+  "tasks": [
+    {
+      "index": 1,
+      "condition": "IPE",
+      "started_at": 1793794202.8943484,
+      "current_prompt": "anjing berbulu tebal dan anjing kecil didepannya",
+      "n_iter": 4,
+      "done": false,
+      "completed": false,
+      "iters_to_threshold": null,
+      "best_score": 0.794668972492218,
+      "words_typed": 11
+    }
+  ]
+}

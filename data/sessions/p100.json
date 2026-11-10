@@ -1,0 +1,17 @@
+{
+  "pid": "p100",
+  "order": "BA",
+  "stage": "practice_1",
+  "created": 1793790538.7577775,
+  "practice": {
+    "IPE": {
+      "prompt": "",
+      "n": 0
+    },
+    "CFU": {
+      "prompt": "mobil terbang",
+      "n": 1
+    }
+  },
+  "tasks": []
+}

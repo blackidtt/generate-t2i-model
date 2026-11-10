@@ -1,0 +1,30 @@
+{
+  "pid": "p02",
+  "order": "BA",
+  "stage": "task_1",
+  "created": 1793794215.7256377,
+  "practice": {
+    "IPE": {
+      "prompt": "",
+      "n": 0
+    },
+    "CFU": {
+      "prompt": "",
+      "n": 0
+    }
+  },
+  "tasks": [
+    {
+      "index": 1,
+      "condition": "CFU",
+      "started_at": 1793794310.4593163,
+      "current_prompt": "",
+      "n_iter": 0,
+      "done": false,
+      "completed": false,
+      "iters_to_threshold": null,
+      "best_score": 0.0,
+      "words_typed": 0
+    }
+  ]
+}

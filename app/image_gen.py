@@ -19,16 +19,28 @@ def _load_pipe():
     from diffusers import AutoPipelineForText2Image
 
     if torch.cuda.is_available():
-        device, dtype, variant = "cuda", torch.float16, "fp16"
+        vram_gb = torch.cuda.get_device_properties(0).total_memory / (1024**3)
+        kwargs = {"torch_dtype": torch.float16, "variant": "fp16"}
+        pipe = AutoPipelineForText2Image.from_pretrained(config.SDXL_MODEL, **kwargs)
+        if vram_gb < 8:
+            # GPU VRAM terbatas (seperti RTX 2050 4GB): offload model per layer agar tidak OOM
+            pipe.enable_model_cpu_offload()
+        else:
+            pipe.to("cuda")
+        try:
+            pipe.enable_vae_slicing()
+        except Exception:
+            pass
     elif getattr(torch.backends, "mps", None) and torch.backends.mps.is_available():
-        device, dtype, variant = "mps", torch.float16, None
+        pipe = AutoPipelineForText2Image.from_pretrained(
+            config.SDXL_MODEL, torch_dtype=torch.float16
+        )
+        pipe.to("mps")
     else:
-        device, dtype, variant = "cpu", torch.float32, None
-    kwargs = {"torch_dtype": dtype}
-    if variant:
-        kwargs["variant"] = variant
-    pipe = AutoPipelineForText2Image.from_pretrained(config.SDXL_MODEL, **kwargs)
-    pipe.to(device)
+        pipe = AutoPipelineForText2Image.from_pretrained(
+            config.SDXL_MODEL, torch_dtype=torch.float32
+        )
+        pipe.to("cpu")
     pipe.set_progress_bar_config(disable=True)
     _pipe = pipe
     return _pipe

@@ -14,7 +14,7 @@ from . import config, image_gen, lang, llm, similarity
 
 IPE, CFU = "IPE", "CFU"
 ORDERS = {"AB": [IPE, CFU], "BA": [CFU, IPE]}   # A = In-Place Editing, B = Conversational Follow-Up
-STAGES = ["consent", "practice_1", "practice_2", "task_1", "break", "task_2", "done"]
+STAGES = ["consent", "guide", "task_1", "break", "task_2", "done"]
 PID_RE = re.compile(r"^[A-Za-z0-9_-]{1,32}$")
 
 _io_lock = threading.RLock()
@@ -41,7 +41,10 @@ def load(pid: str) -> dict:
     p = _sess_path(_check_pid(pid))
     if not p.exists():
         raise AppError("Sesi tidak ditemukan. Daftarkan kode partisipan terlebih dahulu.", 404)
-    return json.loads(p.read_text(encoding="utf-8"))
+    data = json.loads(p.read_text(encoding="utf-8"))
+    if data.get("stage") in ("practice_1", "practice_2"):
+        data["stage"] = "guide"
+    return data
 
 
 def save(sess: dict) -> None:
@@ -93,9 +96,9 @@ def public_state(sess: dict) -> dict:
     """Status yang aman dikirim ke browser (tanpa skor dan tanpa prompt rahasia)."""
     stage = sess["stage"]
     mode = None
-    if stage in ("practice_1", "practice_2", "task_1", "task_2"):
+    if stage in ("task_1", "task_2"):
         mode = ORDERS[sess["order"]][int(stage[-1]) - 1]
-    out = {"pid": sess["pid"], "stage": stage, "mode": mode}
+    out = {"pid": sess["pid"], "stage": stage, "mode": mode, "order": sess.get("order")}
     if stage in ("task_1", "task_2"):
         idx = int(stage[-1])
         task = next((t for t in sess["tasks"] if t["index"] == idx), None)
@@ -108,6 +111,8 @@ def public_state(sess: dict) -> dict:
 def advance(pid: str, from_stage: str) -> dict:
     with _io_lock:
         sess = load(pid)
+        if from_stage in ("practice_1", "practice_2"):
+            from_stage = "guide"
         if sess["stage"] != from_stage:
             raise AppError("Tahap tidak sesuai. Muat ulang halaman.")
         if from_stage in ("task_1", "task_2"):

@@ -50,10 +50,10 @@ Partisipan tidak melihat skor. Peneliti bisa melihatnya di:
 
 ## Alur sesi per partisipan
 
-`consent` > `practice_1` > `practice_2` > `task_1` > `break` > `task_2` > `done`
+`consent` > `guide` (panduan interaktif IPE & CFU) > `task_1` > `break` > `task_2` > `done`
 
 - Urutan kondisi ditentukan saat pendaftaran kode partisipan. Sistem menetapkan urutan yang jumlahnya lebih sedikit (AB atau BA), dan memilih acak saat seimbang, sehingga akhirnya mendekati 15 dan 15 untuk N=30.
-- Latihan: kedua mode dicoba dengan prompt bebas, tanpa gambar target dan tanpa skor (gambar target baru muncul di tugas). Latihan dicatat sebagai `practice_step`, dan penanda bahasa non-Inggris di dalamnya dapat dipakai peneliti untuk menyaring peserta yang tidak mampu menulis bahasa Inggris.
+- Panduan: Partisipan membaca panduan interaktif dua strategi (IPE dan CFU) dengan highlight antarmuka, contoh alur revisi, dan penjelasan pengerjaan sebelum memulai tugas eksperimen.
 - Tugas: partisipan melihat gambar target dan tidak melihat skor. Iterasi ke-1 adalah gambar dari prompt awal, tiap revisi menambah satu iterasi. Tugas selesai otomatis saat skor mencapai ambang. Tidak ada batas iterasi. Tombol berhenti mencatat tugas sebagai tidak selesai.
 - Halaman bisa dimuat ulang di tengah sesi. Tugas dilanjutkan dari iterasi terakhir.
 

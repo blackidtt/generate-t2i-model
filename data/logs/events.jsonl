@@ -1,3 +1,42 @@
 {"ts": 1793532281.061, "event": "register", "pid": "PO1", "order": "AB"}
 {"ts": 1793532283.437, "event": "advance", "pid": "PO1", "from_stage": "consent", "to_stage": "practice_1"}
 {"ts": 1793532362.203, "event": "practice_step", "pid": "PO1", "mode": "IPE", "n": 1, "user_input": "gambar kucing", "prompt_after": "gambar kucing", "non_english_suspected": true, "llm_error": null}
+{"ts": 1793790047.957, "event": "register", "pid": "TEST99", "order": "AB"}
+{"ts": 1793790047.986, "event": "advance", "pid": "TEST99", "from_stage": "consent", "to_stage": "practice_1"}
+{"ts": 1793790048.073, "event": "practice_step", "pid": "TEST99", "mode": "IPE", "n": 1, "user_input": "a cute orange cat on a green sofa", "prompt_after": "a cute orange cat on a green sofa", "non_english_suspected": false, "llm_error": null}
+{"ts": 1793790048.15, "event": "advance", "pid": "TEST99", "from_stage": "practice_1", "to_stage": "practice_2"}
+{"ts": 1793790048.204, "event": "practice_step", "pid": "TEST99", "mode": "CFU", "n": 1, "user_input": "a puppy playing with a ball", "prompt_after": "a puppy playing with a ball", "non_english_suspected": false, "llm_error": null}
+{"ts": 1793790538.764, "event": "register", "pid": "p100", "order": "BA"}
+{"ts": 1793790554.861, "event": "advance", "pid": "p100", "from_stage": "consent", "to_stage": "practice_1"}
+{"ts": 1793790660.199, "event": "practice_step", "pid": "p100", "mode": "CFU", "n": 1, "user_input": "mobil terbang", "prompt_after": "mobil terbang", "non_english_suspected": false, "llm_error": null}
+{"ts": 1793791676.255, "event": "register", "pid": "TEST_GUIDE", "order": "AB"}
+{"ts": 1793791676.278, "event": "advance", "pid": "TEST_GUIDE", "from_stage": "consent", "to_stage": "guide"}
+{"ts": 1793791676.296, "event": "advance", "pid": "TEST_GUIDE", "from_stage": "guide", "to_stage": "task_1"}
+{"ts": 1793791676.317, "event": "task_start", "pid": "TEST_GUIDE", "task": 1, "condition": "IPE", "order": "AB"}
+{"ts": 1793791676.418, "event": "iteration", "pid": "TEST_GUIDE", "task": 1, "condition": "IPE", "iteration": 1, "user_input": "a cute orange cat on a green sofa", "prompt_before": "", "prompt_after": "a cute orange cat on a green sofa", "added_words": ["a", "cute", "orange", "cat", "on", "a", "green", "sofa"], "removed_words": [], "words_typed": 8, "score": 0.6258, "reached": false, "elapsed_s": 0.064, "gen_s": 0.084, "non_english_suspected": false, "llm_error": null, "llm_unchanged": false}
+{"ts": 1793792784.825, "event": "register", "pid": "P03", "order": "BA"}
+{"ts": 1793792787.757, "event": "advance", "pid": "P03", "from_stage": "consent", "to_stage": "guide"}
+{"ts": 1793792802.516, "event": "advance", "pid": "P03", "from_stage": "guide", "to_stage": "task_1"}
+{"ts": 1793792802.573, "event": "task_start", "pid": "P03", "task": 1, "condition": "CFU", "order": "BA"}
+{"ts": 1793792929.77, "event": "register", "pid": "P01", "order": "AB"}
+{"ts": 1793792932.685, "event": "advance", "pid": "P01", "from_stage": "consent", "to_stage": "guide"}
+{"ts": 1793793604.723, "event": "register", "pid": "TOUR_TEST", "order": "AB"}
+{"ts": 1793793604.742, "event": "advance", "pid": "TOUR_TEST", "from_stage": "consent", "to_stage": "guide"}
+{"ts": 1793793604.761, "event": "advance", "pid": "TOUR_TEST", "from_stage": "guide", "to_stage": "task_1"}
+{"ts": 1793794202.866, "event": "advance", "pid": "P01", "from_stage": "guide", "to_stage": "task_1"}
+{"ts": 1793794202.896, "event": "task_start", "pid": "P01", "task": 1, "condition": "IPE", "order": "AB"}
+{"ts": 1793794215.728, "event": "register", "pid": "p02", "order": "BA"}
+{"ts": 1793794217.705, "event": "advance", "pid": "p02", "from_stage": "consent", "to_stage": "guide"}
+{"ts": 1793794310.414, "event": "advance", "pid": "p02", "from_stage": "guide", "to_stage": "task_1"}
+{"ts": 1793794310.461, "event": "task_start", "pid": "p02", "task": 1, "condition": "CFU", "order": "BA"}
+{"ts": 1793795081.618, "event": "register", "pid": "TEST_BABY_PINK", "order": "AB"}
+{"ts": 1793795081.656, "event": "advance", "pid": "TEST_BABY_PINK", "from_stage": "consent", "to_stage": "guide"}
+{"ts": 1793795081.684, "event": "advance", "pid": "TEST_BABY_PINK", "from_stage": "guide", "to_stage": "task_1"}
+{"ts": 1793795081.717, "event": "task_start", "pid": "TEST_BABY_PINK", "task": 1, "condition": "IPE", "order": "AB"}
+{"ts": 1793795081.746, "event": "task_end", "pid": "TEST_BABY_PINK", "task": 1, "condition": "IPE", "completed": false, "iterations": 0, "best_score": 0.0, "elapsed_s": 0.029, "words_typed": 0}
+{"ts": 1793795081.768, "event": "advance", "pid": "TEST_BABY_PINK", "from_stage": "task_1", "to_stage": "break"}
+{"ts": 1793795081.783, "event": "advance", "pid": "TEST_BABY_PINK", "from_stage": "break", "to_stage": "task_2"}
+{"ts": 1793795949.064, "event": "iteration", "pid": "P01", "task": 1, "condition": "IPE", "iteration": 1, "user_input": "anjing dan kucing", "prompt_before": "", "prompt_after": "anjing dan kucing", "added_words": ["anjing", "dan", "kucing"], "removed_words": [], "words_typed": 3, "score": 0.79467, "reached": false, "elapsed_s": 1745.927, "gen_s": 72.974, "non_english_suspected": true, "llm_error": null, "llm_unchanged": false}
+{"ts": 1794043896.43, "event": "iteration", "pid": "P01", "task": 1, "condition": "IPE", "iteration": 2, "user_input": "anjing dan kucing berbulu tebal", "prompt_before": "anjing dan kucing", "prompt_after": "anjing dan kucing berbulu tebal", "added_words": ["berbulu", "tebal"], "removed_words": [], "words_typed": 2, "score": 0.74933, "reached": false, "elapsed_s": 249693.495, "gen_s": 22.479, "non_english_suspected": true, "llm_error": null, "llm_unchanged": false}
+{"ts": 1794043936.058, "event": "iteration", "pid": "P01", "task": 1, "condition": "IPE", "iteration": 3, "user_input": "anjing dan kucing berbulu tebal saling merangkul", "prompt_before": "anjing dan kucing berbulu tebal", "prompt_after": "anjing dan kucing berbulu tebal saling merangkul", "added_words": ["saling", "merangkul"], "removed_words": [], "words_typed": 2, "score": 0.7242, "reached": false, "elapsed_s": 249733.127, "gen_s": 25.581, "non_english_suspected": true, "llm_error": null, "llm_unchanged": false}
+{"ts": 1794044135.235, "event": "iteration", "pid": "P01", "task": 1, "condition": "IPE", "iteration": 4, "user_input": "anjing berbulu tebal dan anjing kecil didepannya", "prompt_before": "anjing dan kucing berbulu tebal saling merangkul", "prompt_after": "anjing berbulu tebal dan anjing kecil didepannya", "added_words": ["dan", "anjing", "kecil", "didepannya"], "removed_words": ["dan", "kucing", "saling", "merangkul"], "words_typed": 4, "score": 0.73735, "reached": false, "elapsed_s": 249932.264, "gen_s": 22.39, "non_english_suspected": true, "llm_error": null, "llm_unchanged": false}
