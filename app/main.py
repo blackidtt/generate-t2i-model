@@ -15,7 +15,7 @@ app = FastAPI(title="Demo IPE vs CFU")
 
 @app.on_event("startup")
 def warmup():
-    """Memuat SDXL-Turbo, CLIP, dan Qwen3 ke memori sekali di awal, lalu mencetak waktunya."""
+    """Memuat Z-Image-Turbo, CLIP, dan Qwen3 ke memori sekali di awal, lalu mencetak waktunya."""
     if config.MOCK or not config.WARMUP:
         return
     import time
@@ -23,7 +23,7 @@ def warmup():
 
     t = time.time()
     img = image_gen.generate("a photo of a cat")
-    print(f"[warmup] SDXL-Turbo siap ({time.time() - t:.1f} detik pemuatan + generate pertama)")
+    print(f"[warmup] Z-Image-Turbo siap ({time.time() - t:.1f} detik pemuatan + generate pertama)")
     t = time.time()
     image_gen.generate("a photo of a dog")
     print(f"[warmup] generate berikutnya: {time.time() - t:.2f} detik per gambar")

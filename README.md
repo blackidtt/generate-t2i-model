@@ -6,8 +6,8 @@ Aplikasi web untuk menjalankan sesi eksperimen sesuai proposal "Pengaruh Strateg
 
 | Komponen | Pilihan | File |
 |---|---|---|
-| Model gambar | SDXL-Turbo, 1 langkah, guidance 0, 512x512, seed tetap | `app/image_gen.py` |
-| LLM penerjemah (mode CFU) | Qwen3-4B lewat Ollama, temperature 0, seed tetap, instruksi sistem perubahan minimal | `app/llm.py` |
+| Model gambar | Z-Image-Turbo 4-bit (`unsloth/Z-Image-Turbo-unsloth-bnb-4bit`), 9 langkah, guidance 0, 512x512, seed tetap | `app/image_gen.py` |
+| LLM penerjemah (mode CFU) | Qwen3-4B-Instruct-2507 (`qwen3:4b-instruct-2507-q4_K_M`) lewat Ollama, temperature 0, seed tetap, instruksi sistem perubahan minimal | `app/llm.py` |
 | Skor kemiripan | Kosinus embedding gambar CLIP ViT-B/32 (open_clip), ambang 0,85 | `app/similarity.py` |
 | Constraint bahasa | Semua teks partisipan wajib bahasa Inggris. Deteksi hanya menandai log dan menampilkan peringatan | `app/lang.py` |
 | Logika sesi, counterbalancing, log | | `app/core.py` |
@@ -30,15 +30,15 @@ Buka http://localhost:8000. Tambahkan `?order=AB` atau `?order=BA` pada URL untu
 
 ```bash
 pip install -r requirements.txt            # torch sebaiknya dipasang sesuai CUDA di mesin Anda
-ollama pull qwen3:4b                       # butuh Ollama versi terbaru agar "think": false didukung
+ollama pull qwen3:4b-instruct-2507-q4_K_M  # jangan "qwen3:4b": tag itu kini model thinking yang menulis penalarannya ke prompt
 python -m scripts.make_target "A tiny fluffy kitten is guarding a very large Golden Retriever that is peacefully sleeping. The kitten sits upright beside the dog with a serious, determined expression, acting like a tiny bodyguard protecting its giant friend. The dramatic size difference between the tiny kitten and the huge dog is clearly emphasized, creating an adorable and funny contrast. Cute, heartwarming, playful atmosphere, highly detailed fluffy fur, expressive face, soft natural lighting, photorealistic."
 uvicorn app.main:app --host 0.0.0.0 --port 8000
 ```
 
 1. `make_target` membuat `static/target.png` dari prompt rahasia dengan seed yang sama dengan aplikasi, dan menyimpan prompt itu di `data/secret/target_prompt.txt`. Karena target dibuat dari prompt rahasia, ambang kemiripan pasti bisa dicapai. Jangan beri tahu prompt ini ke partisipan.
-2. Unduhan pertama SDXL-Turbo dan CLIP berjalan saat permintaan generate pertama. Panaskan dulu dengan satu sesi latihan.
-3. Pengaturan lewat environment variable: `THRESHOLD`, `SEED`, `SDXL_MODEL`, `OLLAMA_URL`, `OLLAMA_MODEL`, `OLLAMA_KEEP_ALIVE`, `SHOW_LLM_PROMPT`, `SHOW_SCORE`, `WARMUP`, `DATA_DIR`.
-4. Saat server menyala, SDXL-Turbo, CLIP, dan Qwen3 dimuat ke memori dan waktunya dicetak di terminal (`[warmup] ...`). Server baru siap setelah baris itu selesai. Matikan dengan `WARMUP=0`. Ollama menjaga Qwen3 tetap di memori selama 60 menit terakhir penggunaan.
+2. Unduhan pertama Z-Image-Turbo (~6 GB) dan CLIP berjalan saat permintaan generate pertama. Panaskan dulu dengan satu sesi latihan. Versi 4-bit butuh GPU NVIDIA dengan ~9 GB VRAM.
+3. Pengaturan lewat environment variable: `THRESHOLD`, `SEED`, `IMAGE_MODEL`, `IMAGE_STEPS`, `IMG_SIZE`, `OLLAMA_URL`, `OLLAMA_MODEL`, `OLLAMA_KEEP_ALIVE`, `SHOW_LLM_PROMPT`, `SHOW_SCORE`, `WARMUP`, `DATA_DIR`.
+4. Saat server menyala, Z-Image-Turbo, CLIP, dan Qwen3 dimuat ke memori dan waktunya dicetak di terminal (`[warmup] ...`). Server baru siap setelah baris itu selesai. Matikan dengan `WARMUP=0`. Ollama menjaga Qwen3 tetap di memori selama 60 menit terakhir penggunaan.
 
 ## Melihat skor CLIP
 
@@ -86,6 +86,6 @@ Mohon ditinjau kelompok, karena memengaruhi data.
 
 ## Batasan
 
-- Jalur mode asli (SDXL-Turbo, CLIP, Ollama) belum diuji end-to-end karena tidak ada GPU dan akses model di lingkungan penyusunan. Yang sudah diuji hanya alur aplikasi, log, counterbalancing, dan skrip analisis dalam mode MOCK. Jalankan satu sesi latihan dan satu tugas penuh sebelum pilot.
-- Lisensi SDXL-Turbo di Hugging Face adalah `sai-nc-community`. Periksa ketentuannya untuk kebutuhan penelitian Anda.
+- Model gambar diganti dari SDXL-Turbo ke Z-Image-Turbo karena SDXL-Turbo sering tidak sesuai prompt (encoder CLIP-nya juga memotong prompt di 77 token). Target dan ambang yang dibuat dengan SDXL-Turbo tidak berlaku lagi: buat ulang `static/target.png` dengan `make_target` dan cek ulang ambang 0,85 lewat pilot.
+- Lisensi Z-Image-Turbo adalah Apache-2.0, bebas dipakai untuk penelitian.
 - Tidak ada autentikasi. Jalankan hanya di jaringan lokal selama sesi.

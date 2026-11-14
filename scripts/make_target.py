@@ -1,6 +1,6 @@
 """Membuat gambar target dari prompt rahasia dengan seed tetap, lalu menyimpannya ke static/target.png.
 
-Karena target dibuat oleh SDXL-Turbo dengan seed yang sama dengan aplikasi, ambang kemiripan pasti bisa
+Karena target dibuat oleh model gambar yang sama (Z-Image-Turbo) dengan seed yang sama dengan aplikasi, ambang kemiripan pasti bisa
 dicapai (prompt rahasia menghasilkan skor 1,0). Prompt rahasia tidak boleh diberi tahu ke partisipan.
 
 Pemakaian:

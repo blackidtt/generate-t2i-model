@@ -50,3 +50,10 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+.cache/
+env.sh
+*.log
+data_studi/
+*.pid
+tunnel.log
+uvicorn.log

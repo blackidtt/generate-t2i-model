@@ -21,6 +21,7 @@ SYSTEM_PROMPT = (
 
 def _clean(text: str) -> str:
     text = re.sub(r"<think>.*?</think>", "", text, flags=re.S | re.I)
+    text = text.split("</think>")[-1]   # template Ollama bisa membuka <think> sendiri sehingga hanya penutupnya yang muncul
     text = text.strip().splitlines()[0] if text.strip() else ""
     text = re.sub(r"^(new prompt|prompt)\s*:\s*", "", text, flags=re.I)
     return text.strip().strip('"').strip("'").strip()

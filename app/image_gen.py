@@ -1,4 +1,4 @@
-"""Generator gambar. Mode asli memakai SDXL-Turbo, mode MOCK menggambar kartu warna dari hash prompt."""
+"""Generator gambar. Mode asli memakai Z-Image-Turbo, mode MOCK menggambar kartu warna dari hash prompt."""
 import hashlib
 import textwrap
 import threading
@@ -16,31 +16,23 @@ def _load_pipe():
     if _pipe is not None:
         return _pipe
     import torch
-    from diffusers import AutoPipelineForText2Image
+    from diffusers import DiffusionPipeline   # otomatis menjadi ZImagePipeline
 
     if torch.cuda.is_available():
         vram_gb = torch.cuda.get_device_properties(0).total_memory / (1024**3)
-        kwargs = {"torch_dtype": torch.float16, "variant": "fp16"}
-        pipe = AutoPipelineForText2Image.from_pretrained(config.SDXL_MODEL, **kwargs)
-        if vram_gb < 8:
-            # GPU VRAM terbatas (seperti RTX 2050 4GB): offload model per layer agar tidak OOM
+        pipe = DiffusionPipeline.from_pretrained(config.IMAGE_MODEL, torch_dtype=torch.bfloat16)
+        if vram_gb < 12:
+            # Versi 4-bit butuh ~9 GB VRAM. Di bawah itu offload model ke CPU agar tidak OOM
             pipe.enable_model_cpu_offload()
         else:
             pipe.to("cuda")
-        try:
-            pipe.enable_vae_slicing()
-        except Exception:
-            pass
-    elif getattr(torch.backends, "mps", None) and torch.backends.mps.is_available():
-        pipe = AutoPipelineForText2Image.from_pretrained(
-            config.SDXL_MODEL, torch_dtype=torch.float16
-        )
-        pipe.to("mps")
     else:
-        pipe = AutoPipelineForText2Image.from_pretrained(
-            config.SDXL_MODEL, torch_dtype=torch.float32
-        )
-        pipe.to("cpu")
+        # Kuantisasi bitsandbytes hanya jalan di GPU NVIDIA. Untuk Mac/CPU pakai IMAGE_MODEL=Tongyi-MAI/Z-Image-Turbo
+        mps = getattr(torch.backends, "mps", None) and torch.backends.mps.is_available()
+        device = "mps" if mps else "cpu"
+        dtype = torch.bfloat16 if mps else torch.float32
+        pipe = DiffusionPipeline.from_pretrained(config.IMAGE_MODEL, torch_dtype=dtype)
+        pipe.to(device)
     pipe.set_progress_bar_config(disable=True)
     _pipe = pipe
     return _pipe
@@ -76,8 +68,8 @@ def generate(prompt: str) -> Image.Image:
         generator = torch.Generator("cpu").manual_seed(config.SEED)
         out = pipe(
             prompt=prompt,
-            num_inference_steps=1,   # SDXL-Turbo dirancang untuk 1 sampai 4 langkah
-            guidance_scale=0.0,      # SDXL-Turbo dilatih tanpa classifier-free guidance
+            num_inference_steps=config.IMAGE_STEPS,
+            guidance_scale=0.0,      # Z-Image-Turbo hasil distilasi, dipakai tanpa classifier-free guidance
             height=config.IMG_SIZE,
             width=config.IMG_SIZE,
             generator=generator,
